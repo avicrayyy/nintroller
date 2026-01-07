@@ -14,20 +14,20 @@ type Props = {
 
 export function NESController({ className, onButtonChange }: Props) {
   const [pressed, setPressed] = React.useState<Set<NESButton>>(() => new Set());
+  const pressedRef = React.useRef<Set<NESButton>>(new Set());
 
   const setButtonPressed = React.useCallback(
     (button: NESButton, isPressed: boolean, source: InputSource) => {
-      setPressed((prev) => {
-        const next = new Set(prev);
-        const had = next.has(button);
-        if (isPressed) next.add(button);
-        else next.delete(button);
+      const next = new Set(pressedRef.current);
+      const had = next.has(button);
+      if (had === isPressed) return;
 
-        // Only emit when it actually changes.
-        if (had !== isPressed)
-          onButtonChange?.({ button, pressed: isPressed, source });
-        return next;
-      });
+      if (isPressed) next.add(button);
+      else next.delete(button);
+
+      pressedRef.current = next;
+      setPressed(next);
+      onButtonChange?.({ button, pressed: isPressed, source });
     },
     [onButtonChange]
   );
@@ -61,14 +61,15 @@ export function NESController({ className, onButtonChange }: Props) {
   // Safety: release everything on blur.
   React.useEffect(() => {
     const onBlur = () => {
-      setPressed((prev) => {
-        if (prev.size === 0) return prev;
-        const released = Array.from(prev);
-        released.forEach((b) =>
-          onButtonChange?.({ button: b, pressed: false, source: "keyboard" })
-        );
-        return new Set();
-      });
+      const prev = pressedRef.current;
+      if (prev.size === 0) return;
+
+      const released = Array.from(prev);
+      pressedRef.current = new Set();
+      setPressed(new Set());
+      released.forEach((b) =>
+        onButtonChange?.({ button: b, pressed: false, source: "keyboard" })
+      );
     };
     window.addEventListener("blur", onBlur);
     return () => window.removeEventListener("blur", onBlur);

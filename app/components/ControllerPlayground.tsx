@@ -2,7 +2,7 @@
 
 import type { ButtonChangeEvent } from "./NESController";
 import { NESController } from "./NESController";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 type LogRow = ButtonChangeEvent & { ts: number };
 
@@ -12,6 +12,11 @@ function formatTime(ts: number) {
 
 export function ControllerPlayground() {
   const [log, setLog] = useState<LogRow[]>([]);
+  const [lastCheat, setLastCheat] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const sessionId = useId();
 
   return (
     <div className="flex w-full flex-col items-center gap-10">
@@ -23,11 +28,42 @@ export function ControllerPlayground() {
           Click/tap buttons or use your keyboard: Arrows, Z (B), X (A), Shift
           (Select), Enter (Start).
         </p>
+        <div className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+          {lastCheat ? (
+            <>
+              Detected cheat:{" "}
+              <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+                {lastCheat.name}
+              </span>
+            </>
+          ) : (
+            <>No cheat detected yet.</>
+          )}
+        </div>
       </div>
 
       <NESController
         onButtonChange={(e) => {
           setLog((prev) => [{ ...e, ts: Date.now() }, ...prev].slice(0, 30));
+
+          // Store input + detect cheats server-side.
+          void fetch("/api/cheats", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ sessionId, event: e, ts: Date.now() }),
+          })
+            .then((r) => r.json())
+            .then((data) => {
+              if (data?.detected?.id && data?.detected?.name) {
+                setLastCheat({
+                  id: data.detected.id,
+                  name: data.detected.name,
+                });
+              }
+            })
+            .catch(() => {
+              // Ignore transient errors (e.g., offline).
+            });
         }}
       />
 
