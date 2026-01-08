@@ -13,8 +13,7 @@ const mockInnerWidth = (width: number) => {
   });
 };
 
-// Mock fetch for cheat detection
-global.fetch = jest.fn();
+// No need to mock fetch - cheat detection is now client-side
 
 describe("ControllerPlayground", () => {
   beforeEach(() => {
