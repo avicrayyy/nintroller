@@ -1,4 +1,4 @@
-import type { NESButton } from "./types";
+import type { NESButton } from "@/app/types/nes-controller";
 
 export const KEY_TO_BUTTON: Record<string, NESButton | undefined> = {
   ArrowUp: "up",
