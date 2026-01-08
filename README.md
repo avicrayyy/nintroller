@@ -86,6 +86,22 @@ The log shows:
 
 By default, cheat detection runs **client-side** for better performance, zero server costs, and offline support. However, if you need server-side detection (e.g., for analytics, rate limiting, or preventing client-side manipulation), you can enable it:
 
+#### Why Client-Side by Default?
+
+We chose client-side cheat detection as the default implementation for several important reasons:
+
+1. **Cost Optimization**: Serverless functions on Vercel (and similar platforms) incur costs per invocation. For a portfolio piece that could receive unpredictable traffic, client-side detection eliminates API route costs entirely.
+
+2. **Performance**: No network latency means instant cheat detection. Button presses are processed immediately without waiting for server round-trips.
+
+3. **Offline Support**: The application works fully offline - users can detect cheats even without an internet connection.
+
+4. **Scalability**: Client-side detection scales infinitely without server resources. No need to worry about rate limits, cold starts, or server capacity.
+
+5. **Abuse Prevention**: By moving logic to the client, we eliminate the risk of API abuse (spamming endpoints, DDoS attempts, etc.) that could rack up unexpected costs.
+
+**Trade-offs**: Client-side detection means the logic is visible in the browser and could theoretically be manipulated. For a portfolio/gaming project, this is acceptable. For production applications requiring security, use the server-side option (see below).
+
 #### When to Use Server-Side Detection
 
 - **Analytics**: Track cheat usage patterns server-side
