@@ -13,6 +13,10 @@ type SessionState = {
   detections: Array<{ ts: number; cheatId: string; cheatName: string }>;
 };
 
+// NOTE: This is an in-memory session store intended for non-production or single-instance use.
+// In serverless or multi-instance Next.js deployments, each instance has its own memory and
+// sessions stored here will not be shared across instances or survive restarts. For a
+// production-ready implementation, replace this with a durable/shared store (e.g. Redis or DB).
 const SESSIONS = new Map<string, SessionState>();
 const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
 const MAX_EVENTS = 500;
