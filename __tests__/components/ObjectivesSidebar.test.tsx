@@ -197,9 +197,11 @@ describe("ObjectivesSidebar", () => {
 
     // Sidebar should be hidden
     await waitFor(() => {
-      // Desktop sidebar should be hidden (no dialog on desktop)
-      const sidebar = document.querySelector('aside[class*="lg:block"]');
-      expect(sidebar).toHaveClass("lg:hidden");
+      // Desktop sidebar should be hidden (no lg:block class when closed)
+      const sidebar = document.querySelector("aside");
+      expect(sidebar).toBeInTheDocument();
+      expect(sidebar).not.toHaveClass("lg:block");
+      expect(sidebar).toHaveClass("hidden");
     });
 
     // Click FAB again to toggle (should open)
@@ -207,8 +209,9 @@ describe("ObjectivesSidebar", () => {
 
     // Sidebar should be visible again
     await waitFor(() => {
-      const sidebar = document.querySelector('aside[class*="lg:block"]');
-      expect(sidebar).not.toHaveClass("lg:hidden");
+      const sidebar = document.querySelector("aside");
+      expect(sidebar).toBeInTheDocument();
+      expect(sidebar).toHaveClass("lg:block");
     });
   });
 

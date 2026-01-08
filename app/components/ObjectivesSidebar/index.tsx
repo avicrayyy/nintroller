@@ -297,8 +297,8 @@ export function ObjectivesSidebar() {
 
       {/* Desktop fixed left sidebar - always rendered, visibility controlled by parent layout */}
       <aside
-        className={`hidden lg:block lg:w-[360px] lg:border-r lg:border-emerald-300/20 lg:bg-black/60 lg:pt-14 lg:backdrop-blur ${
-          open ? "" : "lg:hidden"
+        className={`hidden lg:w-[360px] lg:border-r lg:border-emerald-300/20 lg:bg-black/60 lg:pt-14 lg:backdrop-blur ${
+          open ? "lg:block" : ""
         }`}
       >
         <div className="h-full overflow-y-auto px-6 pb-10">

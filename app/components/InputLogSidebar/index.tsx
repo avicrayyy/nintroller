@@ -34,7 +34,10 @@ export function InputLogSidebar() {
       }
     };
 
-    window.addEventListener("objectives-sidebar-opened", handleOtherSidebarOpen);
+    window.addEventListener(
+      "objectives-sidebar-opened",
+      handleOtherSidebarOpen
+    );
     return () => {
       window.removeEventListener(
         "objectives-sidebar-opened",
@@ -164,8 +167,8 @@ export function InputLogSidebar() {
 
       {/* Desktop fixed right sidebar - always rendered, visibility controlled by parent layout */}
       <aside
-        className={`hidden lg:block lg:w-[360px] lg:border-l lg:border-emerald-300/20 lg:bg-black/60 lg:pt-14 lg:backdrop-blur ${
-          open ? "" : "lg:hidden"
+        className={`hidden lg:w-[360px] lg:border-l lg:border-emerald-300/20 lg:bg-black/60 lg:pt-14 lg:backdrop-blur ${
+          open ? "lg:block" : ""
         }`}
       >
         <div className="h-full px-6 pb-10">
@@ -175,4 +178,3 @@ export function InputLogSidebar() {
     </>
   );
 }
-
