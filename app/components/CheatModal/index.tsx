@@ -49,10 +49,10 @@ export function CheatModal({ open, cheat, onClose }: Props) {
             <div className="font-pixel text-[11px] text-emerald-200/80">
               CHEAT UNLOCKED
             </div>
-            <div className="mt-3 font-pixel text-base text-emerald-50">
+            <div className="mt-2 text-2xl font-semibold tracking-tight">
               {cheat.name}
             </div>
-            <div className="mt-2 font-mono text-sm text-emerald-100/80">
+            <div className="mt-2 text-sm text-emerald-300">
               Nice. Keep playing or try another code.
             </div>
           </div>
@@ -61,17 +61,17 @@ export function CheatModal({ open, cheat, onClose }: Props) {
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-lg border border-emerald-300/25 bg-emerald-400/10 px-3 py-2 font-mono text-sm font-semibold text-emerald-50 hover:bg-emerald-400/15"
+            className="shrink-0 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-zinc-100 hover:bg-white/10"
           >
             Close
           </button>
         </div>
 
-        <div className="flex items-center justify-end gap-2 border-t border-emerald-300/15 bg-black/30 p-4">
+        <div className="flex items-center justify-end gap-2 border-t border-white/10 bg-black/20 p-4">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg bg-emerald-300 px-4 py-2 font-mono text-sm font-bold text-black hover:bg-emerald-200"
+            className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-zinc-950 hover:bg-zinc-100"
           >
             Continue
           </button>
@@ -80,5 +80,4 @@ export function CheatModal({ open, cheat, onClose }: Props) {
     </div>
   );
 }
-
 

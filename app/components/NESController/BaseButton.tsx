@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import type { ReactNode } from "react";
 
 import type { NESButton } from "@/app/types/nes-controller";
@@ -18,6 +19,8 @@ export function BaseButton({
   children,
   onChange,
 }: Props) {
+  const capturedPointerId = useRef<number | null>(null);
+
   return (
     <button
       type="button"
@@ -29,15 +32,30 @@ export function BaseButton({
         className
       )}
       onPointerDown={(e) => {
-        (e.currentTarget as HTMLButtonElement).setPointerCapture(e.pointerId);
+        const button = e.currentTarget as HTMLButtonElement;
+        button.setPointerCapture(e.pointerId);
+        capturedPointerId.current = e.pointerId;
         onChange(true);
       }}
       onPointerUp={(e) => {
-        (e.currentTarget as HTMLButtonElement).releasePointerCapture(e.pointerId);
+        const button = e.currentTarget as HTMLButtonElement;
+        button.releasePointerCapture(e.pointerId);
+        capturedPointerId.current = null;
         onChange(false);
       }}
-      onPointerCancel={() => onChange(false)}
-      onPointerLeave={() => onChange(false)}
+      onPointerCancel={(e) => {
+        const button = e.currentTarget as HTMLButtonElement;
+        button.releasePointerCapture(e.pointerId);
+        capturedPointerId.current = null;
+        onChange(false);
+      }}
+      onPointerLeave={() => {
+        // Only release if we don't have pointer capture active
+        // (pointer capture means the pointer is still "ours" even if it leaves visually)
+        if (capturedPointerId.current === null) {
+          onChange(false);
+        }
+      }}
     >
       {children}
     </button>
