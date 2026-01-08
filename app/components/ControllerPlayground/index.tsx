@@ -49,14 +49,20 @@ export function ControllerPlayground() {
     const handleObjectivesToggle = (e: Event) => {
       const customEvent = e as CustomEvent<{ open: boolean }>;
       if (window.innerWidth >= 1024 && hasInitializedRef.current) {
-        setLeftSidebarOpen(customEvent.detail.open);
+        // Defer state update to avoid updating during render
+        queueMicrotask(() => {
+          setLeftSidebarOpen(customEvent.detail.open);
+        });
       }
     };
 
     const handleInputLogToggle = (e: Event) => {
       const customEvent = e as CustomEvent<{ open: boolean }>;
       if (window.innerWidth >= 1024 && hasInitializedRef.current) {
-        setRightSidebarOpen(customEvent.detail.open);
+        // Defer state update to avoid updating during render
+        queueMicrotask(() => {
+          setRightSidebarOpen(customEvent.detail.open);
+        });
       }
     };
 
@@ -106,11 +112,26 @@ export function ControllerPlayground() {
         onClick={() => setModalType("reset")}
         aria-label="Reset progress"
         variant="fab"
-        className={`fixed right-4 top-16 z-40 px-4 py-3 text-sm transition-all duration-300 lg:transition-all lg:duration-300 ${
+        className={`group fixed right-4 top-16 z-40 px-4 py-3 text-sm transition-all duration-300 lg:transition-all lg:duration-300 ${
           rightSidebarOpen ? "lg:right-[376px]" : "lg:right-4"
         }`}
       >
-        RESET
+        <div className="flex items-center gap-2">
+          <svg
+            className="h-4 w-4 transition-transform group-hover:animate-[spin-pause_1.5s_ease-in-out_infinite]"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+            />
+          </svg>
+          <span className="text-xs">RESET</span>
+        </div>
       </IconButton>
 
       {/* Single modal with conditional content */}

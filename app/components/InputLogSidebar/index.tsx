@@ -74,12 +74,14 @@ export function InputLogSidebar() {
             // Toggle on desktop
             setOpen((prev) => {
               const next = !prev;
-              // Dispatch event for other components to track sidebar state
-              window.dispatchEvent(
-                new CustomEvent("input-log-sidebar-toggled", {
-                  detail: { open: next },
-                })
-              );
+              // Dispatch event after state update completes (defer to avoid render errors)
+              queueMicrotask(() => {
+                window.dispatchEvent(
+                  new CustomEvent("input-log-sidebar-toggled", {
+                    detail: { open: next },
+                  })
+                );
+              });
               return next;
             });
           }
