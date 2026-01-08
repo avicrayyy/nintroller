@@ -202,12 +202,14 @@ export function ControllerPlayground() {
                       id: cheat.id,
                       name: cheat.name,
                     });
-                    // Dispatch custom event for objectives sidebar
-                    window.dispatchEvent(
-                      new CustomEvent("cheat-unlocked", {
-                        detail: { cheat: { id: cheat.id, name: cheat.name } },
-                      })
-                    );
+                    // Defer event dispatch to avoid updating during render
+                    queueMicrotask(() => {
+                      window.dispatchEvent(
+                        new CustomEvent("cheat-unlocked", {
+                          detail: { cheat: { id: cheat.id, name: cheat.name } },
+                        })
+                      );
+                    });
                     // Open cheat modal (will override welcome modal if open)
                     setModalType("cheat");
                   }
