@@ -4,10 +4,6 @@ import { useState } from "react";
 
 import { getOrCreateSessionId } from "@/app/utils";
 
-import {
-  DesktopInputHelpCard,
-  NoCheatsWarningCard,
-} from "./ControllerConsoleCards";
 import { Modal } from "./ui/Modal";
 import { CheatContent, WelcomeContent } from "./ui/Modal/content";
 import { useInputLog } from "./InputLog";
@@ -28,11 +24,11 @@ export function ControllerPlayground() {
 
   return (
     <div className="w-full">
-      {/* Top-left FAB to open intro modal */}
+      {/* Top-left FAB to open intro modal (desktop only, mobile has OBJ FAB) */}
       <button
         type="button"
         onClick={() => setModalType("welcome")}
-        className="font-pixel fixed left-4 top-4 z-40 rounded-xl border border-emerald-300/25 bg-black/70 px-4 py-3 text-lg text-emerald-100 shadow-[0_0_0_1px_rgba(16,185,129,0.10),_0_14px_30px_rgba(0,0,0,0.55)] backdrop-blur hover:bg-black/80"
+        className="font-pixel fixed left-4 top-16 z-40 rounded-xl border border-emerald-300/25 bg-black/70 px-4 py-3 text-lg text-emerald-100 shadow-[0_0_0_1px_rgba(16,185,129,0.10),_0_14px_30px_rgba(0,0,0,0.55)] backdrop-blur hover:bg-black/80 lg:left-[376px] lg:top-4"
         aria-label="Show help"
       >
         ?
@@ -64,7 +60,7 @@ export function ControllerPlayground() {
         </p>
       </div>
 
-      <div className="mt-10 flex w-full justify-center lg:justify-start">
+      <div className="mt-10 flex w-full justify-center">
         <div className="w-full max-w-3xl">
           <NESController
             onButtonChange={(e) => {
@@ -83,6 +79,14 @@ export function ControllerPlayground() {
                       id: data.detected.id,
                       name: data.detected.name,
                     });
+                    // Dispatch custom event for objectives sidebar
+                    const cheat = {
+                      id: data.detected.id,
+                      name: data.detected.name,
+                    };
+                    window.dispatchEvent(
+                      new CustomEvent("cheat-unlocked", { detail: { cheat } })
+                    );
                     // Open cheat modal (will override welcome modal if open)
                     setModalType("cheat");
                   }
@@ -92,12 +96,6 @@ export function ControllerPlayground() {
                 });
             }}
           />
-
-          {/* "Console" area below controller */}
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <NoCheatsWarningCard />
-            <DesktopInputHelpCard />
-          </div>
         </div>
       </div>
     </div>

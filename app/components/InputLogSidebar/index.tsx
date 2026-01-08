@@ -1,15 +1,10 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
 import { InputLog } from "@/app/components/InputLog";
 
-export function InputLogSidebarShell({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export function InputLogSidebar() {
   const [open, setOpen] = useState(false);
   const openButtonRef = useRef<HTMLButtonElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -83,13 +78,7 @@ export function InputLogSidebarShell({
           <InputLog className="h-full" />
         </div>
       </aside>
-
-      {/* Main content */}
-      <main className="mx-auto w-full max-w-6xl px-6 py-14 sm:px-10 lg:pr-[420px]">
-        {children}
-      </main>
     </>
   );
 }
-
 

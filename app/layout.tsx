@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Press_Start_2P } from "next/font/google";
 import "./globals.css";
+import { Footer } from "./components/Footer";
 import { InputLogProvider } from "./components/InputLog";
-import { InputLogSidebarShell } from "./components/InputLogSidebarShell";
+import { InputLogSidebar } from "./components/InputLogSidebar";
+import { ObjectivesSidebar } from "./components/ObjectivesSidebar";
 import type { ReactNode } from "react";
 
 const geistSans = Geist({
@@ -47,7 +49,27 @@ export default function RootLayout({
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 opacity-40 [background:radial-gradient(ellipse_at_center,rgba(16,185,129,0.16)_0%,transparent_60%)]"
             />
-            <InputLogSidebarShell>{children}</InputLogSidebarShell>
+
+            {/* Layout Grid: Sidebar | Main Content | Sidebar */}
+            <div className="flex min-h-screen">
+              {/* Left Sidebar - Objectives */}
+              <ObjectivesSidebar />
+
+              {/* Main Content Area */}
+              <div className="flex min-h-screen flex-1 flex-col lg:ml-[360px] lg:mr-[360px]">
+                <main className="flex flex-1 items-center justify-center">
+                  <div className="mx-auto w-full max-w-6xl px-6 py-14 sm:px-10">
+                    {children}
+                  </div>
+                </main>
+
+                {/* Footer */}
+                <Footer />
+              </div>
+
+              {/* Right Sidebar - Input Log */}
+              <InputLogSidebar />
+            </div>
           </div>
         </InputLogProvider>
       </body>
