@@ -9,10 +9,7 @@ A retro-themed Nintendo (NES) controller simulator with real-time input logging 
 ## Demo
 
 <div align="center">
-  <video width="800" controls>
-    <source src="./public/demo-vid.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
-  </video>
+  <img src="./public/demo-desktop.png" alt="Nintroller Desktop View" width="800"/>
   <p><em>Interactive NES controller with cheat detection and input logging</em></p>
 </div>
 
