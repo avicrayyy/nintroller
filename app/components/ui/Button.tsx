@@ -31,10 +31,10 @@ export const Button = forwardRef<HTMLButtonElement, Props>(
         className={cx(
           "cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200",
           variant === "primary"
-            ? "bg-white text-zinc-950 hover:bg-zinc-100 hover:shadow-lg hover:shadow-emerald-500/20"
+            ? "bg-white text-zinc-950 hover:bg-zinc-100 hover:shadow-lg hover:shadow-white/20"
             : variant === "emerald"
-              ? "font-pixel bg-emerald-500 text-black hover:bg-emerald-400 hover:shadow-lg hover:shadow-emerald-400/40 hover:scale-[1.02]"
-              : "border border-white/10 bg-white/5 text-zinc-100 hover:bg-emerald-500/20 hover:border-emerald-400/30 hover:text-emerald-100",
+              ? "font-pixel bg-emerald-500 text-black hover:bg-emerald-400 hover:shadow-lg hover:shadow-emerald-500/40"
+              : "border border-white/10 bg-white/5 text-zinc-100 hover:bg-white/15 hover:border-white/20 hover:shadow-lg hover:shadow-white/10",
           fullWidth && "w-full",
           className
         )}
