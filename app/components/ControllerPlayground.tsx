@@ -24,11 +24,11 @@ export function ControllerPlayground() {
 
   return (
     <div className="w-full">
-      {/* Top-left FAB to open intro modal (desktop only, mobile has OBJ FAB) */}
+      {/* Top-left FAB to open intro modal */}
       <button
         type="button"
         onClick={() => setModalType("welcome")}
-        className="font-pixel fixed left-4 top-16 z-40 rounded-xl border border-emerald-300/25 bg-black/70 px-4 py-3 text-lg text-emerald-100 shadow-[0_0_0_1px_rgba(16,185,129,0.10),_0_14px_30px_rgba(0,0,0,0.55)] backdrop-blur hover:bg-black/80 lg:left-[376px] lg:top-4"
+        className="font-pixel fixed left-4 top-4 z-40 rounded-xl border border-emerald-300/25 bg-black/70 px-4 py-3 text-lg text-emerald-100 shadow-[0_0_0_1px_rgba(16,185,129,0.10),_0_14px_30px_rgba(0,0,0,0.55)] backdrop-blur hover:bg-black/80 lg:left-[376px]"
         aria-label="Show help"
       >
         ?
