@@ -50,10 +50,20 @@ function ObjectivesContent() {
       });
     };
 
+    // Listen for progress reset
+    const handleProgressReset = () => {
+      // Clear localStorage to ensure it's synced
+      localStorage.removeItem("nintroller:unlocked-cheats");
+      // Reset state
+      setUnlockedCheats(new Set());
+    };
+
     window.addEventListener("cheat-unlocked", handleCheatUnlock);
+    window.addEventListener("progress-reset", handleProgressReset);
 
     return () => {
       window.removeEventListener("cheat-unlocked", handleCheatUnlock);
+      window.removeEventListener("progress-reset", handleProgressReset);
     };
   }, []);
 
@@ -159,9 +169,22 @@ export function ObjectivesSidebar() {
         onClick={() => setOpen(true)}
         aria-label="Open objectives"
         variant="fab"
-        className="fixed bottom-32 right-4 z-40 px-5 py-4 text-sm lg:hidden"
+        label="OBJ"
+        className="fixed bottom-16 left-4 z-40 px-4 py-3 lg:hidden"
       >
-        OBJ
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+          />
+        </svg>
       </IconButton>
 
       {/* Mobile modal-like sidebar */}
@@ -182,14 +205,27 @@ export function ObjectivesSidebar() {
                 <div className="font-pixel text-[11px] text-emerald-200/80">
                   OBJECTIVES
                 </div>
-                <button
+                <IconButton
                   ref={closeButtonRef}
-                  type="button"
                   onClick={() => setOpen(false)}
-                  className="rounded-md border border-emerald-300/25 bg-emerald-400/10 px-3 py-1.5 font-mono text-xs font-semibold text-emerald-50 hover:bg-emerald-400/15"
+                  aria-label="Close"
+                  variant="fab"
+                  className="!rounded-full h-8 w-8 p-0"
                 >
-                  Close
-                </button>
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </IconButton>
               </div>
 
               <div className="mt-3">

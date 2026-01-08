@@ -32,9 +32,22 @@ export function InputLogSidebar() {
         onClick={() => setOpen(true)}
         aria-label="Open input log"
         variant="fab"
-        className="fixed bottom-16 right-4 z-40 px-5 py-4 text-sm lg:hidden"
+        label="LOG"
+        className="fixed bottom-16 right-4 z-40 px-4 py-3 lg:hidden"
       >
-        LOG
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
       </IconButton>
 
       {/* Mobile modal-like sidebar */}
@@ -55,14 +68,27 @@ export function InputLogSidebar() {
                 <div className="font-pixel text-[11px] text-emerald-200/80">
                   INPUT LOG
                 </div>
-                <button
+                <IconButton
                   ref={closeButtonRef}
-                  type="button"
                   onClick={() => setOpen(false)}
-                  className="rounded-md border border-emerald-300/25 bg-emerald-400/10 px-3 py-1.5 font-mono text-xs font-semibold text-emerald-50 hover:bg-emerald-400/15"
+                  aria-label="Close"
+                  variant="fab"
+                  className="!rounded-full h-8 w-8 p-0"
                 >
-                  Close
-                </button>
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </IconButton>
               </div>
 
               <div className="mt-3 min-h-0 flex-1">

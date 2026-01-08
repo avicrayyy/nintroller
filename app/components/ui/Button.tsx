@@ -8,7 +8,7 @@ type Props = {
   onClick: () => void;
   children: ReactNode;
   className?: string;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "emerald";
   fullWidth?: boolean;
 };
 
@@ -32,7 +32,9 @@ export const Button = forwardRef<HTMLButtonElement, Props>(
           "cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold transition-colors",
           variant === "primary"
             ? "bg-white text-zinc-950 hover:bg-zinc-100"
-            : "border border-white/10 bg-white/5 text-zinc-100 hover:bg-white/10",
+            : variant === "emerald"
+              ? "font-pixel bg-emerald-500 text-black hover:bg-emerald-400"
+              : "border border-white/10 bg-white/5 text-zinc-100 hover:bg-white/10",
           fullWidth && "w-full",
           className
         )}

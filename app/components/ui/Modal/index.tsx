@@ -12,6 +12,7 @@ type Props = {
   children: ReactNode;
   footerButtonText?: string;
   ariaLabel?: string;
+  onConfirm?: () => void;
 };
 
 export function Modal({
@@ -21,6 +22,7 @@ export function Modal({
   children,
   footerButtonText = "EXECUTE",
   ariaLabel,
+  onConfirm,
 }: Props) {
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -65,7 +67,13 @@ export function Modal({
             </div>
           </div>
 
-          <IconButton ref={closeButtonRef} onClick={onClose} aria-label="Close">
+          <IconButton
+            ref={closeButtonRef}
+            onClick={onClose}
+            aria-label="Close"
+            variant="fab"
+            className="!rounded-full h-8 w-8 p-0"
+          >
             <svg
               className="h-4 w-4"
               fill="none"
@@ -83,7 +91,14 @@ export function Modal({
         </div>
 
         <div className="border-t border-white/10 bg-black/20 p-4">
-          <Button onClick={onClose} fullWidth>
+          <Button
+            onClick={() => {
+              onConfirm?.();
+              onClose();
+            }}
+            fullWidth
+            variant="emerald"
+          >
             {footerButtonText}
           </Button>
         </div>

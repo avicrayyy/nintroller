@@ -1,16 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { getOrCreateSessionId } from "@/app/utils";
 
-import { Modal } from "./ui/Modal";
-import { CheatContent, WelcomeContent } from "./ui/Modal/content";
-import { IconButton } from "./ui/IconButton";
-import { useInputLog } from "./InputLog";
-import { NESController } from "./NESController";
+import { Modal } from "../ui/Modal";
+import {
+  CheatContent,
+  ResetProgressContent,
+  WelcomeContent,
+} from "../ui/Modal/content";
+import { IconButton } from "../ui/IconButton";
+import { useInputLog } from "../InputLog";
+import { NESController } from "../NESController";
 
-type ModalType = "welcome" | "cheat" | null;
+type ModalType = "welcome" | "cheat" | "reset" | null;
 
 export function ControllerPlayground() {
   const { addEvent } = useInputLog();
@@ -22,6 +26,14 @@ export function ControllerPlayground() {
   const [sessionId] = useState(() => getOrCreateSessionId());
   // Single modal state: tracks which modal type is open (or null if closed)
   const [modalType, setModalType] = useState<ModalType>("welcome");
+
+  const handleResetProgress = useCallback(() => {
+    // Clear unlocked cheats from localStorage
+    localStorage.removeItem("nintroller:unlocked-cheats");
+    // Dispatch event to update objectives sidebar (must be synchronous)
+    const event = new CustomEvent("progress-reset", { detail: {} });
+    window.dispatchEvent(event);
+  }, []);
 
   return (
     <div className="w-full">
@@ -35,18 +47,47 @@ export function ControllerPlayground() {
         <span className="inline-block">?</span>
       </IconButton>
 
+      {/* Top-right FAB to reset progress */}
+      <IconButton
+        onClick={() => setModalType("reset")}
+        aria-label="Reset progress"
+        variant="fab"
+        className="fixed right-4 top-4 z-40 px-4 py-3 text-sm lg:right-[376px]"
+      >
+        RESET
+      </IconButton>
+
       {/* Single modal with conditional content */}
       <Modal
         open={modalType !== null}
         onClose={() => setModalType(null)}
         title={
-          modalType === "cheat" ? "CHEAT UNLOCKED" : "WELCOME TO NINTROLLER"
+          modalType === "cheat"
+            ? "CHEAT UNLOCKED"
+            : modalType === "reset"
+            ? "RESET PROGRESS"
+            : "WELCOME TO NINTROLLER"
         }
-        footerButtonText={modalType === "cheat" ? "Continue" : "EXECUTE"}
-        ariaLabel={modalType === "cheat" ? "Cheat detected" : undefined}
+        footerButtonText={
+          modalType === "cheat"
+            ? "Continue"
+            : modalType === "reset"
+            ? "CONFIRM"
+            : "EXECUTE"
+        }
+        ariaLabel={
+          modalType === "cheat"
+            ? "Cheat detected"
+            : modalType === "reset"
+            ? "Reset progress confirmation"
+            : undefined
+        }
+        onConfirm={modalType === "reset" ? handleResetProgress : undefined}
       >
         {modalType === "cheat" && lastCheat ? (
           <CheatContent cheat={lastCheat} />
+        ) : modalType === "reset" ? (
+          <ResetProgressContent />
         ) : (
           <WelcomeContent />
         )}
@@ -102,3 +143,4 @@ export function ControllerPlayground() {
     </div>
   );
 }
+
