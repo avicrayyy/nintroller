@@ -5,4 +5,4 @@ export type {
   ButtonChangeEvent,
   InputSource,
   NESButton,
-} from "./NESController/types";
+} from "@/app/types/nes-controller";

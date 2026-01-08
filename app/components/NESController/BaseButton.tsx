@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import type { NESButton } from "./types";
-import { cx, prettyButtonName } from "./utils";
+import type { NESButton } from "@/app/types/nes-controller";
+import { cx, prettyButtonName } from "@/app/utils";
 
 type Props = {
   button: NESButton;

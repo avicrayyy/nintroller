@@ -1,4 +1,4 @@
-import type { NESButton } from "./types";
+import type { NESButton } from "../types/nes-controller";
 
 export function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
@@ -24,5 +24,4 @@ export function prettyButtonName(b: NESButton) {
       return "A";
   }
 }
-
 

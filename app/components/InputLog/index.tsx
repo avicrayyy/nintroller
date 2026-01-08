@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 
-import type { ButtonChangeEvent } from "@/app/components/NESController/types";
+import type { ButtonChangeEvent } from "@/app/types/nes-controller";
 
 export type InputLogRow = ButtonChangeEvent & { ts: number };
 

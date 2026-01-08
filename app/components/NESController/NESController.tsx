@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import type { ButtonChangeEvent, InputSource, NESButton } from "@/app/types/nes-controller";
+import { cx } from "@/app/utils";
+
 import { BaseButton } from "./BaseButton";
 import { KEY_TO_BUTTON, shouldIgnoreKeyEvent } from "./keyboard";
-import type { ButtonChangeEvent, InputSource, NESButton } from "./types";
-import { cx } from "./utils";
 
 type Props = {
   className?: string;

@@ -1,4 +1,4 @@
-import type { NESButton } from "../components/NESController/types";
+import type { NESButton } from "../types/nes-controller";
 
 export type Cheat = {
   id: string;
@@ -43,11 +43,12 @@ export function endsWithSequence(haystack: NESButton[], needle: NESButton[]) {
   return true;
 }
 
-export function detectCheat(pressedButtons: NESButton[], cheats: Cheat[] = CHEATS) {
+export function detectCheat(
+  pressedButtons: NESButton[],
+  cheats: Cheat[] = CHEATS
+) {
   for (const cheat of cheats) {
     if (endsWithSequence(pressedButtons, cheat.sequence)) return cheat;
   }
   return null;
 }
-
-

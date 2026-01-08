@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { detectCheat, maxCheatLength } from "../../libs/cheats";
-import type {
-  ButtonChangeEvent,
-  NESButton,
-} from "../../components/NESController/types";
+import type { ButtonChangeEvent, NESButton } from "../../types/nes-controller";
 
 type StoredEvent = ButtonChangeEvent & { ts: number };
 
