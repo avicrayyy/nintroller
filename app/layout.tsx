@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Press_Start_2P } from "next/font/google";
 import "./globals.css";
+import { InputLog, InputLogProvider } from "./components/InputLog";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -9,6 +10,12 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const pressStart = Press_Start_2P({
+  variable: "--font-pixel",
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -25,9 +32,33 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${pressStart.variable} antialiased`}
       >
-        {children}
+        <InputLogProvider>
+          <div className="retro-bg relative min-h-screen overflow-hidden font-sans text-zinc-50">
+            {/* CRT overlay */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-70 [background:repeating-linear-gradient(to_bottom,rgba(255,255,255,0.05),rgba(255,255,255,0.05)_1px,transparent_1px,transparent_3px)]"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-40 [background:radial-gradient(ellipse_at_center,rgba(16,185,129,0.16)_0%,transparent_60%)]"
+            />
+
+            {/* Right sidebar (desktop) */}
+            <aside className="hidden lg:fixed lg:inset-y-0 lg:right-0 lg:block lg:w-[360px] lg:border-l lg:border-emerald-300/20 lg:bg-black/60 lg:pt-14 lg:backdrop-blur">
+              <div className="h-full px-6 pb-10">
+                <InputLog className="h-full" />
+              </div>
+            </aside>
+
+            {/* Main content */}
+            <main className="mx-auto w-full max-w-6xl px-6 py-14 sm:px-10 lg:pr-[420px]">
+              {children}
+            </main>
+          </div>
+        </InputLogProvider>
       </body>
     </html>
   );
