@@ -32,11 +32,10 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${pressStart.variable}`}
-    >
-      <body className="antialiased">
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${pressStart.variable} antialiased`}
+      >
         <InputLogProvider>
           <div className="retro-bg relative min-h-screen overflow-hidden font-sans text-zinc-50">
             {/* CRT overlay */}
