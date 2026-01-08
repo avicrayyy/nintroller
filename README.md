@@ -82,6 +82,76 @@ The log shows:
 - Press state (down/up)
 - Input source (keyboard/pointer)
 
+### Server-Side Cheat Detection (Optional)
+
+By default, cheat detection runs **client-side** for better performance, zero server costs, and offline support. However, if you need server-side detection (e.g., for analytics, rate limiting, or preventing client-side manipulation), you can enable it:
+
+#### When to Use Server-Side Detection
+
+- **Analytics**: Track cheat usage patterns server-side
+- **Rate Limiting**: Prevent abuse by limiting requests per session
+- **Security**: Prevent client-side manipulation of cheat detection
+- **Multi-Instance Deployments**: Centralized session management
+
+#### How to Enable
+
+1. **Add session ID state** to `ControllerPlayground`:
+
+```typescript
+import { getOrCreateSessionId } from "@/app/utils";
+
+// Inside ControllerPlayground component:
+const [sessionId] = useState(() => getOrCreateSessionId());
+```
+
+2. **Replace client-side detection** with server-side API call:
+
+```typescript
+import { detectCheatOnServer } from "@/app/lib/api/cheats";
+
+// In onButtonChange handler:
+if (e.pressed) {
+  try {
+    const result = await detectCheatOnServer(sessionId, e);
+    if (result.detected) {
+      setLastCheat({
+        id: result.detected.id,
+        name: result.detected.name,
+      });
+      window.dispatchEvent(
+        new CustomEvent("cheat-unlocked", {
+          detail: { cheat: result.detected },
+        })
+      );
+      setModalType("cheat");
+    }
+  } catch (error) {
+    console.error("Cheat detection failed:", error);
+    // Handle error (e.g., offline, rate limited)
+  }
+}
+```
+
+3. **See the commented example** in `app/components/ControllerPlayground/index.tsx` for the full implementation.
+
+#### API Route Details
+
+- **Endpoint**: `POST /api/cheats`
+- **Abstraction Layer**: `app/lib/api/cheats.ts` (use `detectCheatOnServer()`)
+- **Session Storage**: In-memory (not production-ready for multi-instance)
+  - For production, replace with durable storage (Redis, database, etc.)
+  - In serverless deployments, each instance has its own memory
+  - Sessions do not survive restarts
+
+#### Production Considerations
+
+⚠️ **Important**: The default API route uses in-memory session storage, which is **not suitable for production** multi-instance deployments. For production:
+
+- Replace `SESSIONS` Map with a shared store (Redis, database, etc.)
+- Implement proper session cleanup and TTL management
+- Add rate limiting middleware
+- Consider authentication/authorization if needed
+
 ## Development
 
 ### Available Scripts
