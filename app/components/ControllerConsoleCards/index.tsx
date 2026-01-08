@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react";
 
+import { cx } from "@/app/utils";
+
 function Card({
   title,
   children,
@@ -13,10 +15,10 @@ function Card({
 }) {
   return (
     <div
-      className={[
+      className={cx(
         "rounded-2xl border border-emerald-300/20 bg-black/50 p-4 shadow-[0_0_0_1px_rgba(16,185,129,0.10),_0_18px_35px_rgba(0,0,0,0.45)] backdrop-blur",
-        className ?? "",
-      ].join(" ")}
+        className
+      )}
     >
       <div className="font-pixel text-[11px] text-emerald-200/80">
         {title}
