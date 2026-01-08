@@ -6,6 +6,7 @@ import { getOrCreateSessionId } from "@/app/utils";
 
 import { Modal } from "./ui/Modal";
 import { CheatContent, WelcomeContent } from "./ui/Modal/content";
+import { IconButton } from "./ui/IconButton";
 import { useInputLog } from "./InputLog";
 import { NESController } from "./NESController";
 
@@ -25,14 +26,14 @@ export function ControllerPlayground() {
   return (
     <div className="w-full">
       {/* Top-left FAB to open intro modal */}
-      <button
-        type="button"
+      <IconButton
         onClick={() => setModalType("welcome")}
-        className="font-pixel fixed left-4 top-4 z-40 rounded-xl border border-emerald-300/25 bg-black/70 px-4 py-3 text-lg text-emerald-100 shadow-[0_0_0_1px_rgba(16,185,129,0.10),_0_14px_30px_rgba(0,0,0,0.55)] backdrop-blur hover:bg-black/80 lg:left-[376px]"
         aria-label="Show help"
+        variant="fab"
+        className="fixed left-4 top-4 z-40 px-4 py-3 text-lg hover:[&>span]:animate-[glitch_0.3s_ease-in-out_infinite] lg:left-[376px]"
       >
-        ?
-      </button>
+        <span className="inline-block">?</span>
+      </IconButton>
 
       {/* Single modal with conditional content */}
       <Modal

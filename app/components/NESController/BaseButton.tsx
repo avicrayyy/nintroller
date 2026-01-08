@@ -27,7 +27,7 @@ export function BaseButton({
       aria-label={prettyButtonName(button)}
       aria-pressed={down}
       className={cx(
-        "select-none touch-none",
+        "cursor-pointer select-none touch-none",
         "outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/60 dark:focus-visible:ring-zinc-100/70",
         className
       )}

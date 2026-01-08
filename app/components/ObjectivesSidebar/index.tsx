@@ -8,6 +8,7 @@ import {
   DesktopInputHelpCard,
   NoCheatsWarningCard,
 } from "../ControllerConsoleCards";
+import { IconButton } from "../ui/IconButton";
 
 type CheatUnlockEvent = CustomEvent<{ cheat: Cheat }>;
 
@@ -153,15 +154,15 @@ export function ObjectivesSidebar() {
   return (
     <>
       {/* Mobile FAB */}
-      <button
+      <IconButton
         ref={openButtonRef}
-        type="button"
         onClick={() => setOpen(true)}
-        className="font-pixel fixed bottom-32 right-4 z-40 rounded-xl border border-emerald-300/25 bg-black/70 px-5 py-4 text-sm text-emerald-100 shadow-[0_0_0_1px_rgba(16,185,129,0.10),_0_14px_30px_rgba(0,0,0,0.55)] backdrop-blur hover:bg-black/80 lg:hidden"
         aria-label="Open objectives"
+        variant="fab"
+        className="fixed bottom-32 right-4 z-40 px-5 py-4 text-sm lg:hidden"
       >
         OBJ
-      </button>
+      </IconButton>
 
       {/* Mobile modal-like sidebar */}
       {open ? (
