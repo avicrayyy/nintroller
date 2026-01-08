@@ -1,16 +1,24 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
-type Cheat = { id: string; name: string };
+import { useEffect, useRef, type ReactNode } from "react";
 
 type Props = {
   open: boolean;
-  cheat: Cheat | null;
   onClose: () => void;
+  title: string;
+  children: ReactNode;
+  footerButtonText?: string;
+  ariaLabel?: string;
 };
 
-export function CheatModal({ open, cheat, onClose }: Props) {
+export function Modal({
+  open,
+  onClose,
+  title,
+  children,
+  footerButtonText = "Get Started",
+  ariaLabel,
+}: Props) {
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
@@ -24,18 +32,18 @@ export function CheatModal({ open, cheat, onClose }: Props) {
 
   useEffect(() => {
     if (!open) return;
-    // Basic focus management: put focus on the close button.
+    // Focus management: put focus on the close button.
     closeButtonRef.current?.focus();
   }, [open]);
 
-  if (!open || !cheat) return null;
+  if (!open) return null;
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
-      aria-label="Cheat detected"
+      aria-label={ariaLabel || title}
       onMouseDown={(e) => {
         // Click outside closes (but only if the backdrop itself was clicked).
         if (e.target === e.currentTarget) onClose();
@@ -45,15 +53,12 @@ export function CheatModal({ open, cheat, onClose }: Props) {
 
       <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-emerald-300/25 bg-black/70 text-emerald-50 shadow-[0_0_0_1px_rgba(16,185,129,0.15),_0_22px_50px_rgba(0,0,0,0.65)] backdrop-blur">
         <div className="flex items-start justify-between gap-4 p-5">
-          <div>
+          <div className="flex-1">
             <div className="font-pixel text-[11px] text-emerald-200/80">
-              CHEAT UNLOCKED
+              {title}
             </div>
-            <div className="mt-2 text-2xl font-semibold tracking-tight">
-              {cheat.name}
-            </div>
-            <div className="mt-2 text-sm text-emerald-300">
-              Nice. Keep playing or try another code.
+            <div className="mt-3 text-sm leading-relaxed text-emerald-100/90">
+              {children}
             </div>
           </div>
 
@@ -62,6 +67,7 @@ export function CheatModal({ open, cheat, onClose }: Props) {
             type="button"
             onClick={onClose}
             className="shrink-0 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-zinc-100 hover:bg-white/10"
+            aria-label="Close"
           >
             Close
           </button>
@@ -73,7 +79,7 @@ export function CheatModal({ open, cheat, onClose }: Props) {
             onClick={onClose}
             className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-zinc-950 hover:bg-zinc-100"
           >
-            Continue
+            {footerButtonText}
           </button>
         </div>
       </div>
