@@ -13,10 +13,23 @@ type SessionState = {
   detections: Array<{ ts: number; cheatId: string; cheatName: string }>;
 };
 
-// NOTE: This is an in-memory session store intended for non-production or single-instance use.
-// In serverless or multi-instance Next.js deployments, each instance has its own memory and
-// sessions stored here will not be shared across instances or survive restarts. For a
-// production-ready implementation, replace this with a durable/shared store (e.g. Redis or DB).
+/**
+ * Cheat Detection API Route
+ *
+ * NOTE: Currently unused - cheat detection has been moved client-side for better
+ * performance and to eliminate abuse risk. This route is kept as an example of
+ * proper API route structure and can be re-enabled if server-side detection is
+ * needed (e.g., for analytics, rate limiting, or preventing client manipulation).
+ *
+ * To use this route, see the commented example in ControllerPlayground/index.tsx
+ * and use the abstraction layer in app/lib/api/cheats.ts
+ *
+ * Original implementation notes:
+ * - In-memory session store (not production-ready for multi-instance deployments)
+ * - For production, replace with durable/shared store (e.g., Redis or DB)
+ * - In serverless deployments, each instance has its own memory
+ * - Sessions do not survive restarts
+ */
 const SESSIONS = new Map<string, SessionState>();
 const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
 const MAX_EVENTS = 500;

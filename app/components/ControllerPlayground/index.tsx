@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { getOrCreateSessionId } from "@/app/utils";
+import { detectCheat, maxCheatLength } from "@/app/libs/cheats";
+import type { NESButton } from "@/app/types/nes-controller";
 
 import { Modal } from "../ui/Modal";
 import {
@@ -22,8 +23,9 @@ export function ControllerPlayground() {
     id: string;
     name: string;
   } | null>(null);
-  // Initialize session ID from localStorage using lazy initialization
-  const [sessionId] = useState(() => getOrCreateSessionId());
+  // Track pressed button sequence for client-side cheat detection
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [pressedSequence, setPressedSequence] = useState<NESButton[]>([]);
   // Single modal state: tracks which modal type is open (or null if closed)
   const [modalType, setModalType] = useState<ModalType>("welcome");
   // Track sidebar states for FAB positioning
@@ -185,34 +187,75 @@ export function ControllerPlayground() {
             onButtonChange={(e) => {
               addEvent(e);
 
-              // Store input + detect cheats server-side.
-              void fetch("/api/cheats", {
-                method: "POST",
-                headers: { "content-type": "application/json" },
-                body: JSON.stringify({ sessionId, event: e, ts: Date.now() }),
-              })
-                .then((r) => r.json())
-                .then((data) => {
-                  if (data?.detected?.id && data?.detected?.name) {
+              // Client-side cheat detection (only check on button press, not release)
+              if (e.pressed) {
+                setPressedSequence((prev) => {
+                  const newSequence = [...prev, e.button];
+                  const maxLen = maxCheatLength();
+                  // Keep only the last N buttons (enough to detect longest cheat)
+                  const trimmed = newSequence.slice(-Math.max(10, maxLen * 2));
+
+                  // Detect cheat in the trimmed sequence
+                  const cheat = detectCheat(trimmed);
+                  if (cheat) {
                     setLastCheat({
-                      id: data.detected.id,
-                      name: data.detected.name,
+                      id: cheat.id,
+                      name: cheat.name,
                     });
                     // Dispatch custom event for objectives sidebar
-                    const cheat = {
-                      id: data.detected.id,
-                      name: data.detected.name,
-                    };
                     window.dispatchEvent(
-                      new CustomEvent("cheat-unlocked", { detail: { cheat } })
+                      new CustomEvent("cheat-unlocked", {
+                        detail: { cheat: { id: cheat.id, name: cheat.name } },
+                      })
                     );
                     // Open cheat modal (will override welcome modal if open)
                     setModalType("cheat");
                   }
-                })
-                .catch(() => {
-                  // Ignore transient errors (e.g., offline).
+
+                  return trimmed;
                 });
+              }
+
+              /* 
+               * EXAMPLE: Server-side cheat detection (commented out)
+               * 
+               * If you need server-side detection (e.g., for analytics, rate limiting,
+               * or preventing client-side manipulation), use the proper abstraction:
+               * 
+               * ```typescript
+               * import { detectCheatOnServer } from "@/app/lib/api/cheats";
+               * 
+               * if (e.pressed) {
+               *   try {
+               *     const result = await detectCheatOnServer(sessionId, e);
+               *     if (result.detected) {
+               *       setLastCheat({
+               *         id: result.detected.id,
+               *         name: result.detected.name,
+               *       });
+               *       window.dispatchEvent(
+               *         new CustomEvent("cheat-unlocked", {
+               *           detail: { cheat: result.detected },
+               *         })
+               *       );
+               *       setModalType("cheat");
+               *     }
+               *   } catch (error) {
+               *     // Handle error (e.g., offline, rate limited)
+               *     console.error("Cheat detection failed:", error);
+               *   }
+               * }
+               * ```
+               * 
+               * NOTE: The above requires:
+               * - sessionId state: `const [sessionId] = useState(() => getOrCreateSessionId());`
+               * - Import: `import { getOrCreateSessionId } from "@/app/utils";`
+               * 
+               * Current implementation uses client-side detection for:
+               * - Better performance (no network latency)
+               * - No server costs/abuse risk
+               * - Works offline
+               */
             }}
           />
         </div>
