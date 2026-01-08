@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Press_Start_2P } from "next/font/google";
 import "./globals.css";
-import { InputLog, InputLogProvider } from "./components/InputLog";
+import { InputLogProvider } from "./components/InputLog";
+import { InputLogSidebarShell } from "./components/InputLogSidebarShell";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,18 +46,7 @@ export default function RootLayout({
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 opacity-40 [background:radial-gradient(ellipse_at_center,rgba(16,185,129,0.16)_0%,transparent_60%)]"
             />
-
-            {/* Right sidebar (desktop) */}
-            <aside className="hidden lg:fixed lg:inset-y-0 lg:right-0 lg:block lg:w-[360px] lg:border-l lg:border-emerald-300/20 lg:bg-black/60 lg:pt-14 lg:backdrop-blur">
-              <div className="h-full px-6 pb-10">
-                <InputLog className="h-full" />
-              </div>
-            </aside>
-
-            {/* Main content */}
-            <main className="mx-auto w-full max-w-6xl px-6 py-14 sm:px-10 lg:pr-[420px]">
-              {children}
-            </main>
+            <InputLogSidebarShell>{children}</InputLogSidebarShell>
           </div>
         </InputLogProvider>
       </body>
