@@ -25,3 +25,27 @@ export function prettyButtonName(b: NESButton) {
   }
 }
 
+const STORAGE_KEY = "nintroller_session_id";
+
+/**
+ * Generate or retrieve session ID from localStorage.
+ * Session ID persists across page refreshes and is used for cheat detection tracking.
+ */
+export function getOrCreateSessionId(): string {
+  if (typeof window === "undefined") {
+    // SSR fallback - will be replaced on client
+    return "";
+  }
+
+  let sessionId = localStorage.getItem(STORAGE_KEY);
+
+  if (!sessionId) {
+    // Generate a new session ID
+    sessionId =
+      crypto.randomUUID?.() ||
+      `sess_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    localStorage.setItem(STORAGE_KEY, sessionId);
+  }
+
+  return sessionId;
+}

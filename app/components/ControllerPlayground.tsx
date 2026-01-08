@@ -1,5 +1,9 @@
 "use client";
 
+import { useState } from "react";
+
+import { getOrCreateSessionId } from "@/app/utils";
+
 import { CheatModal } from "./CheatModal";
 import {
   DesktopInputHelpCard,
@@ -7,7 +11,6 @@ import {
 } from "./ControllerConsoleCards";
 import { useInputLog } from "./InputLog";
 import { NESController } from "./NESController";
-import { useId, useState } from "react";
 
 export function ControllerPlayground() {
   const { addEvent } = useInputLog();
@@ -16,7 +19,8 @@ export function ControllerPlayground() {
     name: string;
   } | null>(null);
   const [cheatModalOpen, setCheatModalOpen] = useState(false);
-  const sessionId = useId();
+  // Initialize session ID from localStorage using lazy initialization
+  const [sessionId] = useState(() => getOrCreateSessionId());
 
   return (
     <div className="w-full">
