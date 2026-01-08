@@ -57,13 +57,13 @@ export function InputLog({ className }: { className?: string }) {
       <div className="sticky top-0 z-10 bg-inherit pt-2">
         <div className="flex items-center justify-between">
           <h2 className="font-pixel text-xs text-emerald-200">INPUT LOG</h2>
-        <button
-          type="button"
-          onClick={clear}
-          className="rounded-md border border-emerald-300/25 bg-emerald-400/10 px-3 py-1.5 text-xs font-semibold text-emerald-100 hover:bg-emerald-400/15"
-        >
-          Clear
-        </button>
+          <button
+            type="button"
+            onClick={clear}
+            className="rounded-md border border-emerald-300/25 bg-emerald-400/10 px-3 py-1.5 text-xs font-semibold text-emerald-100 hover:bg-emerald-400/15"
+          >
+            Clear
+          </button>
         </div>
       </div>
 
