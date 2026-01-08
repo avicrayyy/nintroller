@@ -6,6 +6,16 @@ A retro-themed Nintendo (NES) controller simulator with real-time input logging 
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=flat-square&logo=typescript)
 ![Jest](https://img.shields.io/badge/Jest-30.2-C21325?style=flat-square&logo=jest)
 
+## Screenshots
+
+<div align="center">
+  <img src="./public/desktop-demo.png" alt="Nintroller Desktop View" width="800"/>
+  <p><em>Desktop view with controller and input log sidebar</em></p>
+  
+  <img src="./public/mobile-demo.png" alt="Nintroller Mobile View" width="400"/>
+  <p><em>Mobile view with emulator-style controller layout</em></p>
+</div>
+
 ## Features
 
 - 🎮 **Interactive NES Controller** - Click/tap buttons or use keyboard controls
