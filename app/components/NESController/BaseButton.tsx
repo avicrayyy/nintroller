@@ -1,4 +1,4 @@
-import * as React from "react";
+import type { ReactNode } from "react";
 
 import type { NESButton } from "./types";
 import { cx, prettyButtonName } from "./utils";
@@ -7,7 +7,7 @@ type Props = {
   button: NESButton;
   down: boolean;
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
   onChange: (pressed: boolean) => void;
 };
 

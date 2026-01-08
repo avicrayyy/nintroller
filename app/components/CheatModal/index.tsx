@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useEffect, useRef } from "react";
 
 type Cheat = { id: string; name: string };
 
@@ -11,9 +11,9 @@ type Props = {
 };
 
 export function CheatModal({ open, cheat, onClose }: Props) {
-  const closeButtonRef = React.useRef<HTMLButtonElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) return;
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -22,7 +22,7 @@ export function CheatModal({ open, cheat, onClose }: Props) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) return;
     // Basic focus management: put focus on the close button.
     closeButtonRef.current?.focus();

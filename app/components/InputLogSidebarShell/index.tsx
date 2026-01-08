@@ -1,19 +1,20 @@
 "use client";
 
-import * as React from "react";
+import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { InputLog } from "@/app/components/InputLog";
 
 export function InputLogSidebarShell({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
-  const [open, setOpen] = React.useState(false);
-  const openButtonRef = React.useRef<HTMLButtonElement | null>(null);
-  const closeButtonRef = React.useRef<HTMLButtonElement | null>(null);
+  const [open, setOpen] = useState(false);
+  const openButtonRef = useRef<HTMLButtonElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!open) return;
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
@@ -22,7 +23,7 @@ export function InputLogSidebarShell({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (open) closeButtonRef.current?.focus();
     else openButtonRef.current?.focus();
   }, [open]);

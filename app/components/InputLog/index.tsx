@@ -1,6 +1,13 @@
 "use client";
 
-import * as React from "react";
+import type { ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 
 import type { ButtonChangeEvent } from "@/app/components/NESController/types";
 
@@ -12,25 +19,28 @@ type InputLogContextValue = {
   clear: () => void;
 };
 
-const InputLogContext = React.createContext<InputLogContextValue | null>(null);
+const InputLogContext = createContext<InputLogContextValue | null>(null);
 
-export function InputLogProvider({ children }: { children: React.ReactNode }) {
-  const [rows, setRows] = React.useState<InputLogRow[]>([]);
+export function InputLogProvider({ children }: { children: ReactNode }) {
+  const [rows, setRows] = useState<InputLogRow[]>([]);
 
-  const addEvent = React.useCallback((e: ButtonChangeEvent, ts?: number) => {
+  const addEvent = useCallback((e: ButtonChangeEvent, ts?: number) => {
     const at = typeof ts === "number" ? ts : Date.now();
     setRows((prev) => [{ ...e, ts: at }, ...prev].slice(0, 30));
   }, []);
 
-  const clear = React.useCallback(() => setRows([]), []);
+  const clear = useCallback(() => setRows([]), []);
 
-  const value = React.useMemo(() => ({ rows, addEvent, clear }), [rows, addEvent, clear]);
+  const value = useMemo(
+    () => ({ rows, addEvent, clear }),
+    [rows, addEvent, clear]
+  );
 
   return <InputLogContext.Provider value={value}>{children}</InputLogContext.Provider>;
 }
 
 export function useInputLog() {
-  const ctx = React.useContext(InputLogContext);
+  const ctx = useContext(InputLogContext);
   if (!ctx) throw new Error("useInputLog must be used within <InputLogProvider>");
   return ctx;
 }
