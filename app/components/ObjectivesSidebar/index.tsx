@@ -70,10 +70,10 @@ function ObjectivesContent() {
   return (
     <>
       <div className="mb-6">
-        <div className="font-pixel text-[11px] text-emerald-200/80">
+        <div className="hidden font-pixel text-[11px] text-emerald-200/80 lg:block">
           OBJECTIVES
         </div>
-        <div className="mt-1 font-mono text-[10px] text-emerald-100/60">
+        <div className="mt-1 hidden font-mono text-[10px] text-emerald-100/60 lg:block">
           Unlock all cheats
         </div>
       </div>
@@ -96,18 +96,14 @@ function ObjectivesContent() {
                   <div
                     suppressHydrationWarning
                     className={`font-pixel text-[10px] ${
-                      isUnlocked
-                        ? "text-emerald-300"
-                        : "text-emerald-100/60"
+                      isUnlocked ? "text-emerald-300" : "text-emerald-100/60"
                     }`}
                   >
                     {isUnlocked ? "✓ " : "○ "}
                     {cheat.name}
                   </div>
                   <div className="mt-1.5 font-mono text-[9px] text-emerald-100/50">
-                    {cheat.sequence
-                      .map((btn) => btn.toUpperCase())
-                      .join(" → ")}
+                    {cheat.sequence.map((btn) => btn.toUpperCase()).join(" → ")}
                   </div>
                 </div>
                 {isUnlocked && (
@@ -143,9 +139,42 @@ function ObjectivesContent() {
 }
 
 export function ObjectivesSidebar() {
+  // Always start closed for deterministic SSR
   const [open, setOpen] = useState(false);
   const openButtonRef = useRef<HTMLButtonElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+
+  // Open by default on desktop after mount (client-side hydration)
+  useEffect(() => {
+    if (window.innerWidth >= 1024) {
+      // Hydrating client-side screen size after mount is the correct pattern
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setOpen(true);
+      // Dispatch initial state so other components can sync
+      window.dispatchEvent(
+        new CustomEvent("objectives-sidebar-toggled", {
+          detail: { open: true },
+        })
+      );
+    }
+  }, []);
+
+  // Listen for other sidebar opening on mobile
+  useEffect(() => {
+    const handleOtherSidebarOpen = () => {
+      if (window.innerWidth < 1024 && open) {
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener("input-log-sidebar-opened", handleOtherSidebarOpen);
+    return () => {
+      window.removeEventListener(
+        "input-log-sidebar-opened",
+        handleOtherSidebarOpen
+      );
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -163,14 +192,37 @@ export function ObjectivesSidebar() {
 
   return (
     <>
-      {/* Mobile FAB */}
+      {/* FAB - visible on all screen sizes */}
       <IconButton
         ref={openButtonRef}
-        onClick={() => setOpen(true)}
-        aria-label="Open objectives"
+        onClick={() => {
+          const isMobile = window.innerWidth < 1024;
+          if (isMobile) {
+            setOpen(true);
+            // Notify other sidebar to close on mobile
+            window.dispatchEvent(
+              new CustomEvent("objectives-sidebar-opened", { detail: {} })
+            );
+          } else {
+            // Toggle on desktop
+            setOpen((prev) => {
+              const next = !prev;
+              // Dispatch event for other components to track sidebar state
+              window.dispatchEvent(
+                new CustomEvent("objectives-sidebar-toggled", {
+                  detail: { open: next },
+                })
+              );
+              return next;
+            });
+          }
+        }}
+        aria-label={open ? "Close objectives" : "Open objectives"}
         variant="fab"
         label="OBJ"
-        className="fixed bottom-16 left-4 z-40 px-4 py-3 lg:hidden"
+        className={`fixed bottom-16 left-4 z-40 px-4 py-3 lg:transition-all lg:duration-300 ${
+          open ? "lg:left-[376px]" : "lg:left-4"
+        }`}
       >
         <svg
           className="h-5 w-5"
@@ -187,8 +239,8 @@ export function ObjectivesSidebar() {
         </svg>
       </IconButton>
 
-      {/* Mobile modal-like sidebar */}
-      {open ? (
+      {/* Mobile modal */}
+      {open && (
         <div
           className="fixed inset-0 z-50 lg:hidden"
           role="dialog"
@@ -199,11 +251,16 @@ export function ObjectivesSidebar() {
           }}
         >
           <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px]" />
-          <div className="absolute inset-y-0 left-0 w-[min(360px,calc(100vw-48px))] border-r border-emerald-300/20 bg-black/80 shadow-2xl backdrop-blur">
+          <div className="absolute inset-0 border-r border-emerald-300/20 bg-black/80 shadow-2xl backdrop-blur">
             <div className="flex h-full flex-col overflow-y-auto p-4">
-              <div className="flex items-center justify-between">
-                <div className="font-pixel text-[11px] text-emerald-200/80">
-                  OBJECTIVES
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="font-pixel text-[11px] text-emerald-200/80">
+                    OBJECTIVES
+                  </div>
+                  <div className="mt-1 font-mono text-[10px] text-emerald-100/60">
+                    Unlock all cheats
+                  </div>
                 </div>
                 <IconButton
                   ref={closeButtonRef}
@@ -234,10 +291,14 @@ export function ObjectivesSidebar() {
             </div>
           </div>
         </div>
-      ) : null}
+      )}
 
-      {/* Desktop fixed left sidebar */}
-      <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:block lg:w-[360px] lg:border-r lg:border-emerald-300/20 lg:bg-black/60 lg:pt-14 lg:backdrop-blur">
+      {/* Desktop fixed left sidebar - always rendered, visibility controlled by parent layout */}
+      <aside
+        className={`hidden lg:block lg:w-[360px] lg:border-r lg:border-emerald-300/20 lg:bg-black/60 lg:pt-14 lg:backdrop-blur ${
+          open ? "" : "lg:hidden"
+        }`}
+      >
         <div className="h-full overflow-y-auto px-6 pb-10">
           <ObjectivesContent />
         </div>
@@ -245,4 +306,3 @@ export function ObjectivesSidebar() {
     </>
   );
 }
-

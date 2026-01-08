@@ -38,12 +38,17 @@ export function InputLogProvider({ children }: { children: ReactNode }) {
     [rows, addEvent, clear]
   );
 
-  return <InputLogContext.Provider value={value}>{children}</InputLogContext.Provider>;
+  return (
+    <InputLogContext.Provider value={value}>
+      {children}
+    </InputLogContext.Provider>
+  );
 }
 
 export function useInputLog() {
   const ctx = useContext(InputLogContext);
-  if (!ctx) throw new Error("useInputLog must be used within <InputLogProvider>");
+  if (!ctx)
+    throw new Error("useInputLog must be used within <InputLogProvider>");
   return ctx;
 }
 
@@ -55,17 +60,14 @@ export function InputLog({ className }: { className?: string }) {
   const { rows, clear } = useInputLog();
 
   return (
-    <div className={className}>
+    <div className={`flex h-full flex-col ${className ?? ""}`}>
       <div className="sticky top-0 z-10 bg-inherit pt-2">
-        <div className="flex items-center justify-between">
-          <h2 className="font-pixel text-xs text-emerald-200">INPUT LOG</h2>
-          <Button onClick={clear} variant="emerald" className="px-3 py-1.5 text-xs">
-            Clear
-          </Button>
-        </div>
+        <h2 className="hidden font-pixel text-xs text-emerald-200 lg:block">
+          INPUT LOG
+        </h2>
       </div>
 
-      <div className="mt-3 max-h-[70vh] overflow-auto rounded-xl border border-emerald-300/20 bg-black/50 lg:max-h-[calc(100vh-7rem)]">
+      <div className="mt-3 flex-1 overflow-auto rounded-xl border border-emerald-300/20 bg-black/50">
         {rows.length === 0 ? (
           <div className="px-4 py-6 font-mono text-sm text-emerald-200/70">
             Press something to see events…
@@ -86,9 +88,7 @@ export function InputLog({ className }: { className?: string }) {
                   </span>
                   <span
                     className={
-                      row.pressed
-                        ? "text-emerald-300"
-                        : "text-emerald-200/60"
+                      row.pressed ? "text-emerald-300" : "text-emerald-200/60"
                     }
                   >
                     {row.pressed ? "down" : "up"}
@@ -102,8 +102,16 @@ export function InputLog({ className }: { className?: string }) {
           </ul>
         )}
       </div>
+
+      <div className="sticky bottom-0 z-10 bg-inherit pt-3">
+        <Button
+          onClick={clear}
+          variant="emerald"
+          className="w-full px-3 py-1.5 text-xs"
+        >
+          Clear
+        </Button>
+      </div>
     </div>
   );
 }
-
-

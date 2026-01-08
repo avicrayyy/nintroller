@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { getOrCreateSessionId } from "@/app/utils";
 
@@ -26,6 +26,58 @@ export function ControllerPlayground() {
   const [sessionId] = useState(() => getOrCreateSessionId());
   // Single modal state: tracks which modal type is open (or null if closed)
   const [modalType, setModalType] = useState<ModalType>("welcome");
+  // Track sidebar states for FAB positioning
+  // Initialize to false to match SSR (will be updated in useEffect for desktop)
+  // This prevents hydration mismatches
+  const [leftSidebarOpen, setLeftSidebarOpen] = useState(false);
+  const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
+  // Track if we've done the initial sync to prevent events from overriding initial state
+  const hasInitializedRef = useRef(false);
+
+  // Listen to sidebar toggle events on desktop
+  useEffect(() => {
+    // Ensure state is correct on desktop (sidebars open by default)
+    // Do this first, before setting up event listeners, to prevent race conditions
+    if (window.innerWidth >= 1024) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLeftSidebarOpen(true);
+
+      setRightSidebarOpen(true);
+      hasInitializedRef.current = true;
+    }
+
+    const handleObjectivesToggle = (e: Event) => {
+      const customEvent = e as CustomEvent<{ open: boolean }>;
+      if (window.innerWidth >= 1024 && hasInitializedRef.current) {
+        setLeftSidebarOpen(customEvent.detail.open);
+      }
+    };
+
+    const handleInputLogToggle = (e: Event) => {
+      const customEvent = e as CustomEvent<{ open: boolean }>;
+      if (window.innerWidth >= 1024 && hasInitializedRef.current) {
+        setRightSidebarOpen(customEvent.detail.open);
+      }
+    };
+
+    // Listen for sidebar toggle events (only after initial sync)
+    window.addEventListener(
+      "objectives-sidebar-toggled",
+      handleObjectivesToggle
+    );
+    window.addEventListener("input-log-sidebar-toggled", handleInputLogToggle);
+
+    return () => {
+      window.removeEventListener(
+        "objectives-sidebar-toggled",
+        handleObjectivesToggle
+      );
+      window.removeEventListener(
+        "input-log-sidebar-toggled",
+        handleInputLogToggle
+      );
+    };
+  }, []);
 
   const handleResetProgress = useCallback(() => {
     // Clear unlocked cheats from localStorage
@@ -42,7 +94,9 @@ export function ControllerPlayground() {
         onClick={() => setModalType("welcome")}
         aria-label="Show help"
         variant="fab"
-        className="fixed left-4 top-4 z-40 px-4 py-3 text-lg hover:[&>span]:animate-[glitch_0.3s_ease-in-out_infinite] lg:left-[376px]"
+        className={`fixed left-4 top-16 z-40 px-4 py-3 text-lg transition-all duration-300 hover:[&>span]:animate-[glitch_0.3s_ease-in-out_infinite] lg:transition-all lg:duration-300 ${
+          leftSidebarOpen ? "lg:left-[376px]" : "lg:left-4"
+        }`}
       >
         <span className="inline-block">?</span>
       </IconButton>
@@ -52,7 +106,9 @@ export function ControllerPlayground() {
         onClick={() => setModalType("reset")}
         aria-label="Reset progress"
         variant="fab"
-        className="fixed right-4 top-4 z-40 px-4 py-3 text-sm lg:right-[376px]"
+        className={`fixed right-4 top-16 z-40 px-4 py-3 text-sm transition-all duration-300 lg:transition-all lg:duration-300 ${
+          rightSidebarOpen ? "lg:right-[376px]" : "lg:right-4"
+        }`}
       >
         RESET
       </IconButton>
@@ -73,7 +129,7 @@ export function ControllerPlayground() {
             ? "Continue"
             : modalType === "reset"
             ? "CONFIRM"
-            : "EXECUTE"
+            : "Lez Ge Tit"
         }
         ariaLabel={
           modalType === "cheat"
@@ -143,4 +199,3 @@ export function ControllerPlayground() {
     </div>
   );
 }
-

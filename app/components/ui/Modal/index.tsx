@@ -20,7 +20,7 @@ export function Modal({
   onClose,
   title,
   children,
-  footerButtonText = "EXECUTE",
+  footerButtonText = "Lez Ge Tit",
   ariaLabel,
   onConfirm,
 }: Props) {
