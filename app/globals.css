@@ -24,3 +24,39 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Retro theme helpers */
+.retro-bg {
+  background:
+    radial-gradient(900px 520px at 50% 0%, rgba(16, 185, 129, 0.14), transparent 60%),
+    radial-gradient(700px 420px at 15% 35%, rgba(16, 185, 129, 0.07), transparent 60%),
+    radial-gradient(700px 420px at 85% 55%, rgba(16, 185, 129, 0.06), transparent 60%),
+    linear-gradient(180deg, #050607 0%, #000000 100%);
+}
+
+.font-pixel {
+  font-family: var(--font-pixel), var(--font-geist-mono), ui-monospace, SFMono-Regular,
+    Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  letter-spacing: 0.06em;
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-1px) rotate(-0.4deg);
+  }
+  50% {
+    transform: translateX(1px) rotate(0.4deg);
+  }
+  75% {
+    transform: translateX(-1px) rotate(-0.3deg);
+  }
+}
+
+/* Tailwind v4 supports arbitrary @keyframes but this keeps it simple and reusable. */
+.animate-wiggle {
+  animation: wiggle 0.55s ease-in-out infinite;
+}
