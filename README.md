@@ -6,14 +6,14 @@ A retro-themed Nintendo (NES) controller simulator with real-time input logging 
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=flat-square&logo=typescript)
 ![Jest](https://img.shields.io/badge/Jest-30.2-C21325?style=flat-square&logo=jest)
 
-## Screenshots
+## Demo
 
 <div align="center">
-  <img src="./public/desktop-demo.png" alt="Nintroller Desktop View" width="800"/>
-  <p><em>Desktop view with controller and input log sidebar</em></p>
-  
-  <img src="./public/mobile-demo.png" alt="Nintroller Mobile View" width="400"/>
-  <p><em>Mobile view with emulator-style controller layout</em></p>
+  <video width="800" controls>
+    <source src="./public/demo-vid.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+  <p><em>Interactive NES controller with cheat detection and input logging</em></p>
 </div>
 
 ## Features
@@ -54,6 +54,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ### Controller Controls
 
 **Keyboard Mapping**:
+
 - Arrow Keys - D-pad (Up, Down, Left, Right)
 - `Z` - B button
 - `X` - A button
@@ -78,6 +79,7 @@ When a cheat is detected, a modal will appear celebrating your discovery! 🎉
 - **Mobile**: Tap the "LOG" FAB button in the top-right to open the log drawer
 
 The log shows:
+
 - Timestamp of each event
 - Button pressed
 - Press state (down/up)
@@ -104,25 +106,124 @@ pnpm lint         # Run ESLint
 
 ### Project Structure
 
-```
-app/
-├── api/
-│   └── cheats/          # Cheat detection API
-├── components/
-│   ├── CheatModal/      # Cheat detection modal
-│   ├── InputLog/        # Input log component + provider
-│   ├── NESController/    # Controller component
-│   └── ...
-├── libs/
-│   └── cheats.ts        # Cheat definitions + detection
-└── layout.tsx           # Root layout
+This project follows Next.js 16 App Router conventions with a component-based architecture. Here's a comprehensive overview:
 
-__tests__/               # Test files
 ```
+nintroller/
+├── app/                          # Next.js App Router directory
+│   ├── api/                      # API routes
+│   │   └── cheats/
+│   │       └── route.ts          # Cheat detection endpoint
+│   │
+│   ├── components/               # React components
+│   │   ├── ControllerPlayground/ # Main playground orchestrator
+│   │   │   └── index.tsx        # Manages controller, modals, FABs
+│   │   │
+│   │   ├── NESController/       # NES Controller component
+│   │   │   ├── index.tsx        # Re-export shim
+│   │   │   ├── NESController.tsx # Main controller UI
+│   │   │   ├── BaseButton.tsx   # Reusable button component
+│   │   │   └── keyboard.ts      # Keyboard event handlers
+│   │   │
+│   │   ├── InputLog/            # Input logging system
+│   │   │   └── index.tsx        # Component + Context Provider
+│   │   │
+│   │   ├── InputLogSidebar/     # Right sidebar (desktop) / modal (mobile)
+│   │   │   └── index.tsx        # Responsive sidebar component
+│   │   │
+│   │   ├── ObjectivesSidebar/   # Left sidebar for cheat objectives
+│   │   │   └── index.tsx        # Displays cheat list + progress
+│   │   │
+│   │   ├── ControllerConsoleCards/ # Console-style info cards
+│   │   │   └── index.tsx        # Warning & help cards
+│   │   │
+│   │   └── ui/                  # Reusable UI components
+│   │       ├── Button.tsx       # Button component (variants: primary, secondary, emerald)
+│   │       ├── IconButton/      # Icon button with FAB variant
+│   │       │   └── index.tsx
+│   │       └── Modal/           # Accessible modal component
+│   │           ├── index.tsx    # Modal wrapper
+│   │           └── content/    # Modal content components
+│   │               ├── WelcomeContent.tsx
+│   │               ├── CheatContent.tsx
+│   │               ├── ResetProgressContent.tsx
+│   │               └── index.tsx
+│   │
+│   ├── libs/                     # Business logic libraries
+│   │   └── cheats.ts            # Cheat definitions & detection logic
+│   │
+│   ├── types/                    # TypeScript type definitions
+│   │   └── nes-controller.ts    # NES controller types
+│   │
+│   ├── utils/                    # Utility functions
+│   │   └── index.ts             # cx, prettyButtonName, getOrCreateSessionId
+│   │
+│   ├── globals.css               # Global styles + Tailwind
+│   ├── layout.tsx               # Root layout (sidebars, providers)
+│   └── page.tsx                 # Home page (renders ControllerPlayground)
+│
+├── __tests__/                    # Test files
+│   ├── components/              # Component tests
+│   │   ├── Button.test.tsx
+│   │   ├── IconButton.test.tsx
+│   │   ├── InputLog.test.tsx
+│   │   ├── InputLogSidebar.test.tsx
+│   │   ├── ObjectivesSidebar.test.tsx
+│   │   ├── ControllerPlayground.test.tsx
+│   │   └── CheatModal.test.tsx
+│   └── lib/                     # Utility/library tests
+│       ├── cheats.test.ts
+│       ├── keyboard.test.ts
+│       └── utils.test.ts
+│
+├── public/                       # Static assets
+│   └── demo-vid.mp4             # Demo video
+│
+└── [config files]               # package.json, tsconfig.json, etc.
+```
+
+#### Key Directories Explained
+
+- **`app/components/`**: All React components organized by feature
+
+  - Each component lives in its own folder with an `index.tsx` entry point
+  - `ui/` contains reusable components used across the app
+  - Feature components (like `NESController/`, `InputLog/`) are self-contained
+
+- **`app/libs/`**: Pure business logic (no React dependencies)
+
+  - Cheat detection algorithms
+  - Data transformations
+  - Utility functions that don't depend on React
+
+- **`app/types/`**: Shared TypeScript type definitions
+
+  - Centralized types for better maintainability
+  - Used across components and utilities
+
+- **`app/utils/`**: Shared utility functions
+
+  - `cx()` for className concatenation
+  - Formatting helpers
+  - Client-side utilities (localStorage, etc.)
+
+- **`__tests__/`**: Test organization mirrors source structure
+  - `components/` for React component tests
+  - `lib/` for utility/library tests
+  - Follows TDD principles with comprehensive coverage
+
+#### Component Architecture Patterns
+
+1. **Folder-based organization**: Each component has its own folder
+2. **Re-export shims**: `index.tsx` files provide clean import paths
+3. **Context providers**: Shared state via React Context (e.g., `InputLogProvider`)
+4. **Event-driven communication**: Custom events for cross-component updates
+5. **Responsive design**: Mobile-first with desktop enhancements
 
 ### Code Style
 
 This project enforces:
+
 - **No `React.*` namespace usage** - Use direct imports (`useState`, `useEffect`, etc.)
 - **Component folder structure** - Components live at folder entrypoints
 - **TypeScript strict mode** - Full type safety

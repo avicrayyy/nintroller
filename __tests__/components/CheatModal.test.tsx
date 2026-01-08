@@ -1,12 +1,20 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { CheatModal } from "@/app/components/CheatModal";
+import { Modal } from "@/app/components/ui/Modal";
+import { CheatContent } from "@/app/components/ui/Modal/content";
 
 describe("CheatModal", () => {
   test("does not render when closed", () => {
     render(
-      <CheatModal open={false} cheat={{ id: "abba", name: "ABBA" }} onClose={() => {}} />
+      <Modal
+        open={false}
+        onClose={() => {}}
+        title="CHEAT UNLOCKED"
+        footerButtonText="Continue"
+      >
+        <CheatContent cheat={{ id: "abba", name: "ABBA" }} />
+      </Modal>
     );
     expect(screen.queryByRole("dialog")).toBeNull();
   });
@@ -15,7 +23,16 @@ describe("CheatModal", () => {
     const user = userEvent.setup();
     const onClose = jest.fn();
 
-    render(<CheatModal open cheat={{ id: "abba", name: "ABBA" }} onClose={onClose} />);
+    render(
+      <Modal
+        open
+        onClose={onClose}
+        title="CHEAT UNLOCKED"
+        footerButtonText="Continue"
+      >
+        <CheatContent cheat={{ id: "abba", name: "ABBA" }} />
+      </Modal>
+    );
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText("ABBA")).toBeInTheDocument();
