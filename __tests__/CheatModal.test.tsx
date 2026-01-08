@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { Modal } from "@/app/components/Modal";
-import { CheatContent } from "@/app/components/Modal/content";
+import { Modal } from "@/app/components/ui/Modal";
+import { CheatContent } from "@/app/components/ui/Modal/content";
 
 describe("CheatModal", () => {
   test("does not render when closed", () => {
