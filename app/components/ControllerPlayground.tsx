@@ -8,8 +8,8 @@ import {
   DesktopInputHelpCard,
   NoCheatsWarningCard,
 } from "./ControllerConsoleCards";
-import { Modal } from "./Modal";
-import { CheatContent, WelcomeContent } from "./Modal/content";
+import { Modal } from "./ui/Modal";
+import { CheatContent, WelcomeContent } from "./ui/Modal/content";
 import { useInputLog } from "./InputLog";
 import { NESController } from "./NESController";
 
@@ -45,7 +45,7 @@ export function ControllerPlayground() {
         title={
           modalType === "cheat" ? "CHEAT UNLOCKED" : "WELCOME TO NINTROLLER"
         }
-        footerButtonText={modalType === "cheat" ? "Continue" : "Get Started"}
+        footerButtonText={modalType === "cheat" ? "Continue" : "EXECUTE"}
         ariaLabel={modalType === "cheat" ? "Cheat detected" : undefined}
       >
         {modalType === "cheat" && lastCheat ? (
