@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Cheat } from "@/app/libs/cheats";
+import { EVENT_NAMES, isTypedEvent, getEventDetail } from "@/app/utils/events";
 
 const STORAGE_KEY = "nintroller:unlocked-cheats";
 
@@ -28,13 +29,15 @@ export function useUnlockedCheats() {
   // Listen for cheat unlocks and progress reset
   useEffect(() => {
     const handleCheatUnlock = (e: Event) => {
-      const customEvent = e as CustomEvent<{ cheat: Cheat }>;
-      setUnlockedCheats((prev) => {
-        const next = new Set(prev);
-        next.add(customEvent.detail.cheat.id);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify([...next]));
-        return next;
-      });
+      if (isTypedEvent<{ cheat: Cheat }>(e, EVENT_NAMES.CHEAT_UNLOCKED)) {
+        const detail = getEventDetail(e);
+        setUnlockedCheats((prev) => {
+          const next = new Set(prev);
+          next.add(detail.cheat.id);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify([...next]));
+          return next;
+        });
+      }
     };
 
     const handleProgressReset = () => {
@@ -42,15 +45,17 @@ export function useUnlockedCheats() {
       setUnlockedCheats(new Set());
     };
 
-    window.addEventListener("cheat-unlocked", handleCheatUnlock);
-    window.addEventListener("progress-reset", handleProgressReset);
+    window.addEventListener(EVENT_NAMES.CHEAT_UNLOCKED, handleCheatUnlock);
+    window.addEventListener(EVENT_NAMES.PROGRESS_RESET, handleProgressReset);
 
     return () => {
-      window.removeEventListener("cheat-unlocked", handleCheatUnlock);
-      window.removeEventListener("progress-reset", handleProgressReset);
+      window.removeEventListener(EVENT_NAMES.CHEAT_UNLOCKED, handleCheatUnlock);
+      window.removeEventListener(
+        EVENT_NAMES.PROGRESS_RESET,
+        handleProgressReset
+      );
     };
   }, []);
 
   return unlockedCheats;
 }
-

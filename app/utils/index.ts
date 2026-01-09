@@ -49,3 +49,6 @@ export function getOrCreateSessionId(): string {
 
   return sessionId;
 }
+
+// Re-export event helpers
+export * from "./events";

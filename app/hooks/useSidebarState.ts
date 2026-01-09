@@ -1,4 +1,9 @@
 import { useEffect, useState } from "react";
+import {
+  EVENT_NAMES,
+  createSidebarToggleEvent,
+  createSidebarOpenedEvent,
+} from "@/app/utils/events";
 
 type UseSidebarStateOptions = {
   /**
@@ -29,9 +34,12 @@ export function useSidebarState({
       setOpen(true);
       // Dispatch initial state so other components can sync
       window.dispatchEvent(
-        new CustomEvent(toggleEvent, {
-          detail: { open: true },
-        })
+        createSidebarToggleEvent(
+          toggleEvent as
+            | typeof EVENT_NAMES.OBJECTIVES_SIDEBAR_TOGGLED
+            | typeof EVENT_NAMES.INPUT_LOG_SIDEBAR_TOGGLED,
+          true
+        )
       );
     }
   }, [toggleEvent]);
@@ -55,7 +63,13 @@ export function useSidebarState({
     if (isMobile) {
       setOpen(true);
       // Notify other sidebar to close on mobile
-      window.dispatchEvent(new CustomEvent(openEvent, { detail: {} }));
+      window.dispatchEvent(
+        createSidebarOpenedEvent(
+          openEvent as
+            | typeof EVENT_NAMES.OBJECTIVES_SIDEBAR_OPENED
+            | typeof EVENT_NAMES.INPUT_LOG_SIDEBAR_OPENED
+        )
+      );
     } else {
       // Toggle on desktop
       setOpen((prev) => {
@@ -63,9 +77,12 @@ export function useSidebarState({
         // Dispatch event after state update completes (defer to avoid render errors)
         queueMicrotask(() => {
           window.dispatchEvent(
-            new CustomEvent(toggleEvent, {
-              detail: { open: next },
-            })
+            createSidebarToggleEvent(
+              toggleEvent as
+                | typeof EVENT_NAMES.OBJECTIVES_SIDEBAR_TOGGLED
+                | typeof EVENT_NAMES.INPUT_LOG_SIDEBAR_TOGGLED,
+              next
+            )
           );
         });
         return next;

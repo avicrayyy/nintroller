@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { EVENT_NAMES, isTypedEvent, getEventDetail } from "@/app/utils/events";
 
 /**
  * Tracks sidebar open/close state by listening to toggle events
@@ -19,32 +20,57 @@ export function useSidebarToggleEvents() {
     }
 
     const handleObjectivesToggle = (e: Event) => {
-      const customEvent = e as CustomEvent<{ open: boolean }>;
-      if (window.innerWidth >= 1024 && hasInitializedRef.current) {
-        queueMicrotask(() => {
-          setLeftSidebarOpen(customEvent.detail.open);
-        });
+      if (
+        isTypedEvent<{ open: boolean }>(
+          e,
+          EVENT_NAMES.OBJECTIVES_SIDEBAR_TOGGLED
+        )
+      ) {
+        const detail = getEventDetail(e);
+        if (window.innerWidth >= 1024 && hasInitializedRef.current) {
+          queueMicrotask(() => {
+            setLeftSidebarOpen(detail.open);
+          });
+        }
       }
     };
 
     const handleInputLogToggle = (e: Event) => {
-      const customEvent = e as CustomEvent<{ open: boolean }>;
-      if (window.innerWidth >= 1024 && hasInitializedRef.current) {
-        queueMicrotask(() => {
-          setRightSidebarOpen(customEvent.detail.open);
-        });
+      if (
+        isTypedEvent<{ open: boolean }>(
+          e,
+          EVENT_NAMES.INPUT_LOG_SIDEBAR_TOGGLED
+        )
+      ) {
+        const detail = getEventDetail(e);
+        if (window.innerWidth >= 1024 && hasInitializedRef.current) {
+          queueMicrotask(() => {
+            setRightSidebarOpen(detail.open);
+          });
+        }
       }
     };
 
-    window.addEventListener("objectives-sidebar-toggled", handleObjectivesToggle);
-    window.addEventListener("input-log-sidebar-toggled", handleInputLogToggle);
+    window.addEventListener(
+      EVENT_NAMES.OBJECTIVES_SIDEBAR_TOGGLED,
+      handleObjectivesToggle
+    );
+    window.addEventListener(
+      EVENT_NAMES.INPUT_LOG_SIDEBAR_TOGGLED,
+      handleInputLogToggle
+    );
 
     return () => {
-      window.removeEventListener("objectives-sidebar-toggled", handleObjectivesToggle);
-      window.removeEventListener("input-log-sidebar-toggled", handleInputLogToggle);
+      window.removeEventListener(
+        EVENT_NAMES.OBJECTIVES_SIDEBAR_TOGGLED,
+        handleObjectivesToggle
+      );
+      window.removeEventListener(
+        EVENT_NAMES.INPUT_LOG_SIDEBAR_TOGGLED,
+        handleInputLogToggle
+      );
     };
   }, []);
 
   return { leftSidebarOpen, rightSidebarOpen };
 }
-

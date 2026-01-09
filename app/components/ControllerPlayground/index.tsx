@@ -15,7 +15,11 @@ import { IconButton } from "../ui/IconButton";
 import { useInputLog } from "../InputLog";
 import { NESController } from "../NESController";
 import { useSidebarToggleEvents } from "@/app/hooks";
-import { cx } from "@/app/utils";
+import {
+  cx,
+  createCheatUnlockedEvent,
+  createProgressResetEvent,
+} from "@/app/utils";
 
 type ModalType = "welcome" | "cheat" | "reset" | null;
 
@@ -37,8 +41,7 @@ export function ControllerPlayground() {
     // Clear unlocked cheats from localStorage
     localStorage.removeItem("nintroller:unlocked-cheats");
     // Dispatch event to update objectives sidebar (must be synchronous)
-    const event = new CustomEvent("progress-reset", { detail: {} });
-    window.dispatchEvent(event);
+    window.dispatchEvent(createProgressResetEvent());
   }, []);
 
   return (
@@ -158,8 +161,9 @@ export function ControllerPlayground() {
                     // Defer event dispatch to avoid updating during render
                     queueMicrotask(() => {
                       window.dispatchEvent(
-                        new CustomEvent("cheat-unlocked", {
-                          detail: { cheat: { id: cheat.id, name: cheat.name } },
+                        createCheatUnlockedEvent({
+                          id: cheat.id,
+                          name: cheat.name,
                         })
                       );
                     });
