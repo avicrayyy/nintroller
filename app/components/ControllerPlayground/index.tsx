@@ -106,7 +106,7 @@ export function ControllerPlayground() {
             ? "Cheat detected"
             : modalType === "reset"
             ? "Reset progress confirmation"
-            : undefined
+            : "Welcome to Nintroller"
         }
         onConfirm={modalType === "reset" ? handleResetProgress : undefined}
       >

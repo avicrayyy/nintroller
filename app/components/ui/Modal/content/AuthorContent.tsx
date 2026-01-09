@@ -10,6 +10,7 @@ export function AuthorContent() {
           href="https://daviddomingo.dev"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Visit daviddomingo.dev - David Domingo's website"
           className="relative h-24 w-24 perspective-1000 coin-flip-container cursor-pointer"
         >
           <div className="relative h-full w-full preserve-3d transition-transform duration-700 coin-flip-inner">
@@ -41,22 +42,24 @@ export function AuthorContent() {
       <p className="text-center">Built and maintained by</p>
       <div className="space-y-2">
         <p className="flex items-center justify-center gap-2">
-          <GitHubIcon className="h-5 w-5 text-emerald-400" />
+          <GitHubIcon className="h-5 w-5 text-emerald-400" aria-hidden="true" />
           <Link
             href="https://github.com/avicrayyy"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="View @avicrayyy on GitHub"
             className="font-pixel text-emerald-400 underline hover:text-emerald-300 transition-colors"
           >
             @avicrayyy
           </Link>
         </p>
         <p className="flex items-center justify-center gap-2">
-          <GlobeIcon className="h-5 w-5 text-emerald-400" />
+          <GlobeIcon className="h-5 w-5 text-emerald-400" aria-hidden="true" />
           <Link
             href="https://daviddomingo.dev"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Visit daviddomingo.dev"
             className="font-pixel text-emerald-400 underline hover:text-emerald-300 transition-colors"
           >
             daviddomingo.dev
