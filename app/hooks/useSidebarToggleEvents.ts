@@ -13,7 +13,6 @@ export function useSidebarToggleEvents() {
   useEffect(() => {
     // Ensure state is correct on desktop (sidebars open by default)
     if (window.innerWidth >= 1024) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLeftSidebarOpen(true);
       setRightSidebarOpen(true);
       hasInitializedRef.current = true;

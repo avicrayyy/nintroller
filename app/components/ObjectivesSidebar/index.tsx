@@ -9,6 +9,7 @@ import {
   NoCheatsWarningCard,
 } from "../ControllerConsoleCards";
 import { IconButton } from "../ui/IconButton";
+import { ChecklistIcon, CloseIcon } from "../icons";
 import {
   useEscapeKey,
   useFocusManagement,
@@ -121,19 +122,7 @@ export function ObjectivesSidebar() {
           open ? "lg:left-[376px]" : "lg:left-4"
         )}
       >
-        <svg
-          className="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-          />
-        </svg>
+        <ChecklistIcon className="h-5 w-5" />
       </IconButton>
 
       {/* Mobile modal */}
@@ -166,19 +155,7 @@ export function ObjectivesSidebar() {
                   variant="fab"
                   className="!rounded-full h-8 w-8 p-0"
                 >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <CloseIcon className="h-4 w-4" />
                 </IconButton>
               </div>
 

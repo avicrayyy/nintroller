@@ -22,7 +22,7 @@ type SessionState = {
  * needed (e.g., for analytics, rate limiting, or preventing client manipulation).
  *
  * To use this route, see the commented example in ControllerPlayground/index.tsx
- * and use the abstraction layer in app/lib/api/cheats.ts
+ * and use the abstraction layer in app/libs/api/cheats.ts
  *
  * Original implementation notes:
  * - In-memory session store (not production-ready for multi-instance deployments)

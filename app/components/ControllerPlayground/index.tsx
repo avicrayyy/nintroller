@@ -14,6 +14,7 @@ import {
 import { IconButton } from "../ui/IconButton";
 import { useInputLog } from "../InputLog";
 import { NESController } from "../NESController";
+import { ResetIcon } from "../icons";
 import { useSidebarToggleEvents } from "@/app/hooks";
 import {
   cx,
@@ -76,19 +77,7 @@ export function ControllerPlayground() {
         )}
       >
         <div className="flex items-center gap-2">
-          <svg
-            className="h-4 w-4 transition-transform group-hover:animate-[spin-pause_1.5s_ease-in-out_infinite]"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-            />
-          </svg>
+          <ResetIcon className="h-4 w-4 transition-transform group-hover:animate-[spin-pause_1.5s_ease-in-out_infinite]" />
           <span className="text-xs">RESET</span>
         </div>
       </IconButton>
@@ -185,7 +174,7 @@ export function ControllerPlayground() {
                * or preventing client-side manipulation), use the proper abstraction:
                *
                * ```typescript
-               * import { detectCheatOnServer } from "@/app/lib/api/cheats";
+               * import { detectCheatOnServer } from "@/app/libs/api/cheats";
                *
                * if (e.pressed) {
                *   try {
