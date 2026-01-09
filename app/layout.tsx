@@ -4,7 +4,7 @@ import "./globals.css";
 import { InputLogProvider } from "./components/InputLog";
 import { InputLogSidebar } from "./components/InputLogSidebar";
 import { ObjectivesSidebar } from "./components/ObjectivesSidebar";
-import { cx } from "./utils";
+import { cx, BACKGROUNDS } from "./utils";
 import type { ReactNode } from "react";
 
 const geistSans = Geist({
@@ -49,11 +49,11 @@ export default function RootLayout({
             {/* CRT overlay */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 opacity-70 [background:repeating-linear-gradient(to_bottom,rgba(255,255,255,0.05),rgba(255,255,255,0.05)_1px,transparent_1px,transparent_3px)]"
+              className={`pointer-events-none absolute inset-0 opacity-70 ${BACKGROUNDS.crtScanlines}`}
             />
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 opacity-40 [background:radial-gradient(ellipse_at_center,rgba(16,185,129,0.16)_0%,transparent_60%)]"
+              className={`pointer-events-none absolute inset-0 opacity-40 ${BACKGROUNDS.emeraldGlow}`}
             />
 
             {/* Layout Grid: Sidebar | Main Content | Sidebar */}

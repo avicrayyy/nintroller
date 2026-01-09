@@ -52,3 +52,6 @@ export function getOrCreateSessionId(): string {
 
 // Re-export event helpers
 export * from "./events";
+
+// Re-export style constants
+export * from "./styles";

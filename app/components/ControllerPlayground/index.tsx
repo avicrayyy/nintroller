@@ -19,6 +19,7 @@ import {
   cx,
   createCheatUnlockedEvent,
   createProgressResetEvent,
+  SHADOWS,
 } from "@/app/utils";
 
 type ModalType = "welcome" | "cheat" | "reset" | null;
@@ -128,7 +129,9 @@ export function ControllerPlayground() {
         )}
       </Modal>
       <div className="text-center">
-        <h1 className="font-pixel text-xl text-emerald-50 drop-shadow-[0_0_12px_rgba(16,185,129,0.18)] sm:text-2xl">
+        <h1
+          className={`font-pixel text-xl text-emerald-50 ${SHADOWS.titleGlow} sm:text-2xl`}
+        >
           NINTROLLER
         </h1>
         <p className="mt-3 font-mono text-sm text-emerald-100/70">

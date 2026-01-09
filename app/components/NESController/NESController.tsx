@@ -7,7 +7,7 @@ import type {
   InputSource,
   NESButton,
 } from "@/app/types/nes-controller";
-import { cx } from "@/app/utils";
+import { cx, RINGS } from "@/app/utils";
 
 import { BaseButton } from "./BaseButton";
 import { KEY_TO_BUTTON, shouldIgnoreKeyEvent } from "./keyboard";
@@ -98,7 +98,7 @@ export function NESController({ className, onButtonChange }: Props) {
       <div className="relative grid grid-cols-2 items-center gap-5 sm:hidden">
         {/* D-Pad */}
         <div className="relative h-[132px] w-[132px]">
-          <div className="absolute inset-0 rounded-2xl bg-zinc-300/40 ring-1 ring-zinc-400/30" />
+          <div className={`absolute inset-0 rounded-2xl bg-zinc-300/40 ${RINGS.light}`} />
           <BaseButton
             button="up"
             down={isDown("up")}
@@ -143,12 +143,12 @@ export function NESController({ className, onButtonChange }: Props) {
             )}
             onChange={(p) => setButtonPressed("right", p, "pointer")}
           />
-          <div className="absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full bg-zinc-800 ring-2 ring-zinc-600/30" />
+          <div className={`absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full bg-zinc-800 ${RINGS.medium}`} />
         </div>
 
         {/* A/B cluster (mobile: diagonal like emulator) */}
         <div className="relative h-[132px] w-[172px] justify-self-end">
-          <div className="absolute inset-0 rounded-2xl bg-zinc-300/40 ring-1 ring-zinc-400/30" />
+          <div className={`absolute inset-0 rounded-2xl bg-zinc-300/40 ${RINGS.light}`} />
 
           <div className="absolute left-3 bottom-3 flex flex-col items-center gap-2">
             <div className="rounded-lg bg-white p-1.5">
@@ -228,7 +228,7 @@ export function NESController({ className, onButtonChange }: Props) {
       <div className="relative hidden items-center justify-between gap-6 sm:flex m-10 mt-20">
         {/* D-Pad */}
         <div className="relative h-[150px] w-[150px] shrink-0">
-          <div className="absolute inset-0 rounded-2xl bg-zinc-300/40 ring-1 ring-zinc-400/30" />
+          <div className={`absolute inset-0 rounded-2xl bg-zinc-300/40 ${RINGS.light}`} />
           <BaseButton
             button="up"
             down={isDown("up")}
@@ -273,7 +273,7 @@ export function NESController({ className, onButtonChange }: Props) {
             )}
             onChange={(p) => setButtonPressed("right", p, "pointer")}
           />
-          <div className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-zinc-800 ring-2 ring-zinc-600/30" />
+          <div className={`absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-zinc-800 ${RINGS.medium}`} />
         </div>
 
         {/* Center: Select / Start */}

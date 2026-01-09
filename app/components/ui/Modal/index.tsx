@@ -4,6 +4,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 
 import { Button } from "../Button";
 import { IconButton } from "../IconButton";
+import { SHADOWS } from "@/app/utils/styles";
 
 type Props = {
   open: boolean;
@@ -56,7 +57,7 @@ export function Modal({
     >
       <div className="absolute inset-0 bg-black/70 backdrop-blur-[2px]" />
 
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-emerald-300/25 bg-black/70 text-emerald-50 shadow-[0_0_0_1px_rgba(16,185,129,0.15),_0_22px_50px_rgba(0,0,0,0.65)] backdrop-blur">
+      <div className={`relative w-full max-w-md overflow-hidden rounded-2xl border border-emerald-300/25 bg-black/70 text-emerald-50 ${SHADOWS.modal} backdrop-blur`}>
         <div className="flex items-start justify-between gap-4 p-5">
           <div className="flex-1">
             <div className="font-pixel text-[11px] text-emerald-200/80">
