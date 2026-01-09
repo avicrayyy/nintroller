@@ -4,6 +4,7 @@ import { useRef } from "react";
 
 import { InputLog } from "@/app/components/InputLog";
 import { IconButton } from "@/app/components/ui/IconButton";
+import { CloseIcon, LogIcon } from "@/app/components/icons";
 import {
   useEscapeKey,
   useFocusManagement,
@@ -39,19 +40,7 @@ export function InputLogSidebar() {
           open ? "lg:right-[376px]" : "lg:right-4"
         )}
       >
-        <svg
-          className="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-          />
-        </svg>
+        <LogIcon className="h-5 w-5" />
       </IconButton>
 
       {/* Mobile modal */}
@@ -84,19 +73,7 @@ export function InputLogSidebar() {
                   variant="fab"
                   className="!rounded-full h-8 w-8 p-0"
                 >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <CloseIcon className="h-4 w-4" />
                 </IconButton>
               </div>
 

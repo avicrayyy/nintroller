@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { Button } from "../Button";
 import { IconButton } from "../IconButton";
+import { CloseIcon } from "../../icons";
 import { SHADOWS } from "@/app/utils/styles";
 import { cx } from "@/app/utils";
 
@@ -121,19 +122,7 @@ export function Modal({
             variant="fab"
             className="!rounded-full h-8 w-8 p-0"
           >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <CloseIcon className="h-4 w-4" />
           </IconButton>
         </div>
 
