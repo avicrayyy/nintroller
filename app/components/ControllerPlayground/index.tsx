@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { detectCheat, maxCheatLength } from "@/app/libs/cheats";
 import type { NESButton } from "@/app/types/nes-controller";
@@ -14,6 +14,7 @@ import {
 import { IconButton } from "../ui/IconButton";
 import { useInputLog } from "../InputLog";
 import { NESController } from "../NESController";
+import { useSidebarToggleEvents } from "@/app/hooks";
 
 type ModalType = "welcome" | "cheat" | "reset" | null;
 
@@ -29,63 +30,7 @@ export function ControllerPlayground() {
   // Single modal state: tracks which modal type is open (or null if closed)
   const [modalType, setModalType] = useState<ModalType>("welcome");
   // Track sidebar states for FAB positioning
-  // Initialize to false to match SSR (will be updated in useEffect for desktop)
-  // This prevents hydration mismatches
-  const [leftSidebarOpen, setLeftSidebarOpen] = useState(false);
-  const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
-  // Track if we've done the initial sync to prevent events from overriding initial state
-  const hasInitializedRef = useRef(false);
-
-  // Listen to sidebar toggle events on desktop
-  useEffect(() => {
-    // Ensure state is correct on desktop (sidebars open by default)
-    // Do this first, before setting up event listeners, to prevent race conditions
-    if (window.innerWidth >= 1024) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLeftSidebarOpen(true);
-
-      setRightSidebarOpen(true);
-      hasInitializedRef.current = true;
-    }
-
-    const handleObjectivesToggle = (e: Event) => {
-      const customEvent = e as CustomEvent<{ open: boolean }>;
-      if (window.innerWidth >= 1024 && hasInitializedRef.current) {
-        // Defer state update to avoid updating during render
-        queueMicrotask(() => {
-          setLeftSidebarOpen(customEvent.detail.open);
-        });
-      }
-    };
-
-    const handleInputLogToggle = (e: Event) => {
-      const customEvent = e as CustomEvent<{ open: boolean }>;
-      if (window.innerWidth >= 1024 && hasInitializedRef.current) {
-        // Defer state update to avoid updating during render
-        queueMicrotask(() => {
-          setRightSidebarOpen(customEvent.detail.open);
-        });
-      }
-    };
-
-    // Listen for sidebar toggle events (only after initial sync)
-    window.addEventListener(
-      "objectives-sidebar-toggled",
-      handleObjectivesToggle
-    );
-    window.addEventListener("input-log-sidebar-toggled", handleInputLogToggle);
-
-    return () => {
-      window.removeEventListener(
-        "objectives-sidebar-toggled",
-        handleObjectivesToggle
-      );
-      window.removeEventListener(
-        "input-log-sidebar-toggled",
-        handleInputLogToggle
-      );
-    };
-  }, []);
+  const { leftSidebarOpen, rightSidebarOpen } = useSidebarToggleEvents();
 
   const handleResetProgress = useCallback(() => {
     // Clear unlocked cheats from localStorage
@@ -218,15 +163,15 @@ export function ControllerPlayground() {
                 });
               }
 
-              /* 
+              /*
                * EXAMPLE: Server-side cheat detection (commented out)
-               * 
+               *
                * If you need server-side detection (e.g., for analytics, rate limiting,
                * or preventing client-side manipulation), use the proper abstraction:
-               * 
+               *
                * ```typescript
                * import { detectCheatOnServer } from "@/app/lib/api/cheats";
-               * 
+               *
                * if (e.pressed) {
                *   try {
                *     const result = await detectCheatOnServer(sessionId, e);
@@ -248,11 +193,11 @@ export function ControllerPlayground() {
                *   }
                * }
                * ```
-               * 
+               *
                * NOTE: The above requires:
                * - sessionId state: `const [sessionId] = useState(() => getOrCreateSessionId());`
                * - Import: `import { getOrCreateSessionId } from "@/app/utils";`
-               * 
+               *
                * Current implementation uses client-side detection for:
                * - Better performance (no network latency)
                * - No server costs/abuse risk

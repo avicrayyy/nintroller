@@ -1,71 +1,23 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
-import { CHEATS, type Cheat } from "@/app/libs/cheats";
+import { CHEATS } from "@/app/libs/cheats";
 
 import {
   DesktopInputHelpCard,
   NoCheatsWarningCard,
 } from "../ControllerConsoleCards";
 import { IconButton } from "../ui/IconButton";
-
-type CheatUnlockEvent = CustomEvent<{ cheat: Cheat }>;
+import {
+  useEscapeKey,
+  useFocusManagement,
+  useSidebarState,
+  useUnlockedCheats,
+} from "@/app/hooks";
 
 function ObjectivesContent() {
-  // Always start with empty Set for deterministic server/client render
-  // Browser-only localStorage is read in effect after mount
-  const [unlockedCheats, setUnlockedCheats] = useState<Set<string>>(
-    () => new Set()
-  );
-
-  // Hydrate from localStorage after mount (browser-only API)
-  // This is the correct pattern: deterministic initial render, then hydrate in effect
-  useEffect(() => {
-    const stored = localStorage.getItem("nintroller:unlocked-cheats");
-    if (stored) {
-      try {
-        const ids = JSON.parse(stored) as string[];
-        // Hydrating from browser-only localStorage after mount is the correct pattern
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setUnlockedCheats(new Set(ids));
-      } catch {
-        // Ignore parse errors
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    // Listen for cheat unlocks
-    const handleCheatUnlock = (e: Event) => {
-      const customEvent = e as CheatUnlockEvent;
-      setUnlockedCheats((prev) => {
-        const next = new Set(prev);
-        next.add(customEvent.detail.cheat.id);
-        localStorage.setItem(
-          "nintroller:unlocked-cheats",
-          JSON.stringify([...next])
-        );
-        return next;
-      });
-    };
-
-    // Listen for progress reset
-    const handleProgressReset = () => {
-      // Clear localStorage to ensure it's synced
-      localStorage.removeItem("nintroller:unlocked-cheats");
-      // Reset state
-      setUnlockedCheats(new Set());
-    };
-
-    window.addEventListener("cheat-unlocked", handleCheatUnlock);
-    window.addEventListener("progress-reset", handleProgressReset);
-
-    return () => {
-      window.removeEventListener("cheat-unlocked", handleCheatUnlock);
-      window.removeEventListener("progress-reset", handleProgressReset);
-    };
-  }, []);
+  const unlockedCheats = useUnlockedCheats();
 
   return (
     <>
@@ -139,86 +91,24 @@ function ObjectivesContent() {
 }
 
 export function ObjectivesSidebar() {
-  // Always start closed for deterministic SSR
-  const [open, setOpen] = useState(false);
   const openButtonRef = useRef<HTMLButtonElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  // Open by default on desktop after mount (client-side hydration)
-  useEffect(() => {
-    if (window.innerWidth >= 1024) {
-      // Hydrating client-side screen size after mount is the correct pattern
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setOpen(true);
-      // Dispatch initial state so other components can sync
-      window.dispatchEvent(
-        new CustomEvent("objectives-sidebar-toggled", {
-          detail: { open: true },
-        })
-      );
-    }
-  }, []);
+  const { open, setOpen, toggle } = useSidebarState({
+    otherSidebarEvent: "input-log-sidebar-opened",
+    openEvent: "objectives-sidebar-opened",
+    toggleEvent: "objectives-sidebar-toggled",
+  });
 
-  // Listen for other sidebar opening on mobile
-  useEffect(() => {
-    const handleOtherSidebarOpen = () => {
-      if (window.innerWidth < 1024 && open) {
-        setOpen(false);
-      }
-    };
-
-    window.addEventListener("input-log-sidebar-opened", handleOtherSidebarOpen);
-    return () => {
-      window.removeEventListener(
-        "input-log-sidebar-opened",
-        handleOtherSidebarOpen
-      );
-    };
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open]);
-
-  useEffect(() => {
-    if (open) closeButtonRef.current?.focus();
-    else openButtonRef.current?.focus();
-  }, [open]);
+  useEscapeKey(open, () => setOpen(false));
+  useFocusManagement(open, openButtonRef, closeButtonRef);
 
   return (
     <>
       {/* FAB - visible on all screen sizes */}
       <IconButton
         ref={openButtonRef}
-        onClick={() => {
-          const isMobile = window.innerWidth < 1024;
-          if (isMobile) {
-            setOpen(true);
-            // Notify other sidebar to close on mobile
-            window.dispatchEvent(
-              new CustomEvent("objectives-sidebar-opened", { detail: {} })
-            );
-          } else {
-            // Toggle on desktop
-            setOpen((prev) => {
-              const next = !prev;
-              // Dispatch event after state update completes (defer to avoid render errors)
-              queueMicrotask(() => {
-                window.dispatchEvent(
-                  new CustomEvent("objectives-sidebar-toggled", {
-                    detail: { open: next },
-                  })
-                );
-              });
-              return next;
-            });
-          }
-        }}
+        onClick={toggle}
         aria-label={open ? "Close objectives" : "Open objectives"}
         variant="fab"
         label="OBJ"
