@@ -34,6 +34,12 @@ export default function NotFound() {
             here
           </button>
           .
+          <span
+            className="inline-block ml-1 animate-blink align-middle text-emerald-100/80"
+            aria-hidden="true"
+          >
+            |
+          </span>
         </p>
         <div className="mt-10">
           <Link
