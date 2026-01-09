@@ -123,7 +123,7 @@ const [sessionId] = useState(() => getOrCreateSessionId());
 2. **Replace client-side detection** with server-side API call:
 
 ```typescript
-import { detectCheatOnServer } from "@/app/lib/api/cheats";
+import { detectCheatOnServer } from "@/app/libs/api/cheats";
 
 // In onButtonChange handler:
 if (e.pressed) {
@@ -153,7 +153,7 @@ if (e.pressed) {
 #### API Route Details
 
 - **Endpoint**: `POST /api/cheats`
-- **Abstraction Layer**: `app/lib/api/cheats.ts` (use `detectCheatOnServer()`)
+- **Abstraction Layer**: `app/libs/api/cheats.ts` (use `detectCheatOnServer()`)
 - **Session Storage**: In-memory (not production-ready for multi-instance)
   - For production, replace with durable storage (Redis, database, etc.)
   - In serverless deployments, each instance has its own memory
@@ -240,12 +240,10 @@ nintroller/
 │   │   ├── useUnlockedCheats.ts # Unlocked cheats with localStorage
 │   │   └── useSidebarToggleEvents.ts # Sidebar toggle event listeners
 │   │
-│   ├── lib/                      # API abstraction layer
+│   ├── libs/                     # Business logic libraries
+│   │   ├── cheats.ts            # Cheat definitions & detection logic
 │   │   └── api/
 │   │       └── cheats.ts       # Server-side cheat detection abstraction (optional)
-│   │
-│   ├── libs/                     # Business logic libraries
-│   │   └── cheats.ts            # Cheat definitions & detection logic
 │   │
 │   ├── types/                    # TypeScript type definitions
 │   │   └── nes-controller.ts    # NES controller types
@@ -290,6 +288,11 @@ nintroller/
   - Cheat detection algorithms
   - Data transformations
   - Utility functions that don't depend on React
+  - **`app/libs/api/`**: API abstraction layer
+    - Encapsulates API route calls
+    - Type-safe request/response handling
+    - Optional server-side patterns (client-side by default)
+    - Co-located with business logic for better organization
 
 - **`app/types/`**: Shared TypeScript type definitions
 
@@ -302,12 +305,6 @@ nintroller/
   - Single responsibility principle
   - Fully typed with TypeScript
   - Examples: `useSidebarState`, `useUnlockedCheats`, `useEscapeKey`
-
-- **`app/lib/api/`**: API abstraction layer
-
-  - Encapsulates API route calls
-  - Type-safe request/response handling
-  - Optional server-side patterns (client-side by default)
 
 - **`app/utils/`**: Shared utility functions
 

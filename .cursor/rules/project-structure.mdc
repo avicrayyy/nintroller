@@ -88,12 +88,10 @@ app/
 │   ├── useUnlockedCheats.ts   # Unlocked cheats state with localStorage persistence
 │   └── useSidebarToggleEvents.ts  # Sidebar toggle event listeners (for FAB positioning)
 │
-├── lib/                    # 📚 API abstraction layer
+├── libs/                   # 🧠 Business logic libraries (pure functions)
+│   ├── cheats.ts           # Cheat definitions, detection algorithms, utilities
 │   └── api/
 │       └── cheats.ts       # Server-side cheat detection abstraction (optional)
-│
-├── libs/                   # 🧠 Business logic libraries (pure functions)
-│   └── cheats.ts           # Cheat definitions, detection algorithms, utilities
 │
 ├── types/                  # 📘 TypeScript type definitions
 │   └── nes-controller.ts   # NES controller types (NESButton, InputSource, ButtonChangeEvent)
@@ -222,12 +220,14 @@ public/
 - **No React dependencies**: Can be used in any context
 - **Testable**: Easy to unit test without React setup
 - **Examples**: `cheats.ts` (detection algorithms, cheat definitions)
+- **API abstractions**: `api/` subdirectory for client-side API wrappers
 
-### API Abstractions (`/app/lib/api/`)
+### API Abstractions (`/app/libs/api/`)
 
 - **Encapsulation**: Abstracts API route calls
 - **Type-safe**: Proper TypeScript types for requests/responses
 - **Optional**: Used only when server-side detection is needed
+- **Co-located**: Lives alongside business logic in `libs/` for better organization
 
 ## Type Organization
 
