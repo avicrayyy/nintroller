@@ -11,10 +11,11 @@ import {
   ResetProgressContent,
   WelcomeContent,
 } from "../ui/Modal/content";
+import Link from "next/link";
 import { IconButton } from "../ui/IconButton";
 import { useInputLog } from "../InputLog";
 import { NESController } from "../NESController";
-import { ResetIcon } from "../icons";
+import { GitHubIcon, ResetIcon } from "../icons";
 import { useSidebarToggleEvents } from "@/app/hooks";
 import {
   cx,
@@ -210,6 +211,22 @@ export function ControllerPlayground() {
             }}
           />
         </div>
+      </div>
+
+      {/* GitHub link at footer level */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30">
+        <Link
+          href="https://github.com/avicrayyy/nintroller"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex flex-col items-center gap-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50 rounded"
+          aria-label="View source code on GitHub"
+        >
+          <GitHubIcon className="h-10 w-10 text-emerald-400 transition-colors group-hover:text-emerald-300" />
+          <span className="font-mono text-xs text-emerald-400/80 group-hover:text-emerald-300/80 transition-colors">
+            VIEW ON GITHUB
+          </span>
+        </Link>
       </div>
     </div>
   );
