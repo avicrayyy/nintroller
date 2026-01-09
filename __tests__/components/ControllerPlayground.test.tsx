@@ -4,6 +4,29 @@ import userEvent from "@testing-library/user-event";
 import { InputLogProvider } from "@/app/components/InputLog";
 import { ControllerPlayground } from "@/app/components/ControllerPlayground";
 
+// Mock Next.js Link component
+jest.mock("next/link", () => {
+  return function MockLink({
+    children,
+    href,
+    target,
+    rel,
+    className,
+  }: {
+    children: React.ReactNode;
+    href: string;
+    target?: string;
+    rel?: string;
+    className?: string;
+  }) {
+    return (
+      <a href={href} target={target} rel={rel} className={className}>
+        {children}
+      </a>
+    );
+  };
+});
+
 // Mock window.innerWidth
 const mockInnerWidth = (width: number) => {
   Object.defineProperty(window, "innerWidth", {
@@ -185,6 +208,59 @@ describe("ControllerPlayground", () => {
       // After initialization, FAB should be in open position (sidebars open by default)
       expect(helpFAB.className).toContain("lg:left-[376px]");
     });
+  });
+
+  test("renders GitHub link at footer level", () => {
+    render(
+      <InputLogProvider>
+        <ControllerPlayground />
+      </InputLogProvider>
+    );
+
+    // Find link by href since aria-label might not work with mocked Link
+    const githubLink = screen.getByRole("link", {
+      name: /view on github/i,
+    });
+    expect(githubLink).toBeInTheDocument();
+    expect(githubLink).toHaveAttribute("href", "https://github.com/avicrayyy/nintroller");
+    expect(githubLink).toHaveAttribute("target", "_blank");
+    expect(githubLink).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  test("GitHub link displays icon and text", () => {
+    render(
+      <InputLogProvider>
+        <ControllerPlayground />
+      </InputLogProvider>
+    );
+
+    // Check for "VIEW ON GITHUB" text
+    expect(screen.getByText("VIEW ON GITHUB")).toBeInTheDocument();
+    
+    // Find the link by text
+    const githubLink = screen.getByRole("link", {
+      name: /view on github/i,
+    });
+    
+    // Check that the link contains the GitHub icon (it should be in the DOM)
+    const svg = githubLink.querySelector("svg");
+    expect(svg).toBeInTheDocument();
+  });
+
+  test("GitHub link is positioned at footer level", () => {
+    render(
+      <InputLogProvider>
+        <ControllerPlayground />
+      </InputLogProvider>
+    );
+
+    const githubLink = screen.getByRole("link", {
+      name: /view on github/i,
+    });
+    const parent = githubLink.closest("div");
+    
+    // Check that the parent container has fixed positioning at bottom
+    expect(parent).toHaveClass("fixed", "bottom-8", "left-1/2");
   });
 });
 
