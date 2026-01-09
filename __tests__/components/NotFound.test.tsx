@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import NotFound from "@/app/not-found";
 
@@ -71,8 +71,13 @@ describe("NotFound", () => {
     const hereButton = screen.getByRole("button", { name: /here/i });
     await user.click(hereButton);
 
-    // Modal should be visible
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    // Wait for modal animation to complete
+    await waitFor(
+      () => {
+        expect(screen.getByRole("dialog")).toBeInTheDocument();
+      },
+      { timeout: 300 }
+    );
     expect(screen.getByText("ABOUT")).toBeInTheDocument();
   });
 
@@ -82,6 +87,14 @@ describe("NotFound", () => {
 
     const hereButton = screen.getByRole("button", { name: /here/i });
     await user.click(hereButton);
+
+    // Wait for modal animation to complete
+    await waitFor(
+      () => {
+        expect(screen.getByRole("dialog")).toBeInTheDocument();
+      },
+      { timeout: 300 }
+    );
 
     expect(screen.getByText("Built and maintained by")).toBeInTheDocument();
     expect(screen.getByText("@avicrayyy")).toBeInTheDocument();
@@ -94,6 +107,14 @@ describe("NotFound", () => {
 
     const hereButton = screen.getByRole("button", { name: /here/i });
     await user.click(hereButton);
+
+    // Wait for modal animation to complete
+    await waitFor(
+      () => {
+        expect(screen.getByRole("dialog")).toBeInTheDocument();
+      },
+      { timeout: 300 }
+    );
 
     const githubLink = screen.getByRole("link", { name: "@avicrayyy" });
     expect(githubLink).toBeInTheDocument();
@@ -108,6 +129,14 @@ describe("NotFound", () => {
 
     const hereButton = screen.getByRole("button", { name: /here/i });
     await user.click(hereButton);
+
+    // Wait for modal animation to complete
+    await waitFor(
+      () => {
+        expect(screen.getByRole("dialog")).toBeInTheDocument();
+      },
+      { timeout: 300 }
+    );
 
     const websiteLink = screen.getByRole("link", { name: "daviddomingo.dev" });
     expect(websiteLink).toBeInTheDocument();
@@ -124,15 +153,26 @@ describe("NotFound", () => {
     const hereButton = screen.getByRole("button", { name: /here/i });
     await user.click(hereButton);
 
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    // Wait for modal to appear
+    await waitFor(
+      () => {
+        expect(screen.getByRole("dialog")).toBeInTheDocument();
+      },
+      { timeout: 300 }
+    );
 
     // Close modal using icon button (aria-label="Close")
     // There are two "Close" buttons, get the first one (icon button)
     const closeButtons = screen.getAllByRole("button", { name: "Close" });
     await user.click(closeButtons[0]);
 
-    // Modal should be closed
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    // Wait for modal to close (animation delay)
+    await waitFor(
+      () => {
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+      },
+      { timeout: 400 }
+    );
   });
 
   test("closes modal when footer button is clicked", async () => {
@@ -143,15 +183,26 @@ describe("NotFound", () => {
     const hereButton = screen.getByRole("button", { name: /here/i });
     await user.click(hereButton);
 
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    // Wait for modal to appear
+    await waitFor(
+      () => {
+        expect(screen.getByRole("dialog")).toBeInTheDocument();
+      },
+      { timeout: 300 }
+    );
 
     // Close modal using footer button (text "Close")
     // There are two "Close" buttons, get the last one (footer button)
     const closeButtons = screen.getAllByRole("button", { name: "Close" });
     await user.click(closeButtons[closeButtons.length - 1]);
 
-    // Modal should be closed
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    // Wait for modal to close (animation delay)
+    await waitFor(
+      () => {
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+      },
+      { timeout: 400 }
+    );
   });
 
   test("closes modal when Escape key is pressed", async () => {
@@ -162,13 +213,24 @@ describe("NotFound", () => {
     const hereButton = screen.getByRole("button", { name: /here/i });
     await user.click(hereButton);
 
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    // Wait for modal to appear
+    await waitFor(
+      () => {
+        expect(screen.getByRole("dialog")).toBeInTheDocument();
+      },
+      { timeout: 300 }
+    );
 
     // Press Escape
     await user.keyboard("{Escape}");
 
-    // Modal should be closed
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    // Wait for modal to close (animation delay)
+    await waitFor(
+      () => {
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+      },
+      { timeout: 400 }
+    );
   });
 
   test("'here' button has pointer cursor style", () => {
