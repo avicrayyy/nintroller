@@ -4,6 +4,7 @@ import "./globals.css";
 import { InputLogProvider } from "./components/InputLog";
 import { InputLogSidebar } from "./components/InputLogSidebar";
 import { ObjectivesSidebar } from "./components/ObjectivesSidebar";
+import { cx } from "./utils";
 import type { ReactNode } from "react";
 
 const geistSans = Geist({
@@ -36,7 +37,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${pressStart.variable} antialiased`}
+        className={cx(
+          geistSans.variable,
+          geistMono.variable,
+          pressStart.variable,
+          "antialiased"
+        )}
       >
         <InputLogProvider>
           <div className="retro-bg relative min-h-screen overflow-hidden font-sans text-zinc-50">

@@ -9,6 +9,7 @@ import {
   useFocusManagement,
   useSidebarState,
 } from "@/app/hooks";
+import { cx } from "@/app/utils";
 
 export function InputLogSidebar() {
   const openButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -32,9 +33,11 @@ export function InputLogSidebar() {
         aria-label={open ? "Close input log" : "Open input log"}
         variant="fab"
         label="LOG"
-        className={`fixed bottom-16 right-4 z-40 px-4 py-3 lg:transition-all lg:duration-300 ${
+        className={cx(
+          "fixed bottom-16 right-4 z-40 px-4 py-3",
+          "lg:transition-all lg:duration-300",
           open ? "lg:right-[376px]" : "lg:right-4"
-        }`}
+        )}
       >
         <svg
           className="h-5 w-5"
@@ -107,9 +110,11 @@ export function InputLogSidebar() {
 
       {/* Desktop fixed right sidebar - always rendered, visibility controlled by parent layout */}
       <aside
-        className={`hidden lg:w-[360px] lg:border-l lg:border-emerald-300/20 lg:bg-black/60 lg:pt-14 lg:backdrop-blur ${
-          open ? "lg:block" : ""
-        }`}
+        className={cx(
+          "hidden lg:w-[360px] lg:border-l lg:border-emerald-300/20",
+          "lg:bg-black/60 lg:pt-14 lg:backdrop-blur",
+          open && "lg:block"
+        )}
       >
         <div className="h-full px-6 pb-10">
           <InputLog className="h-full" />

@@ -15,6 +15,7 @@ import {
   useSidebarState,
   useUnlockedCheats,
 } from "@/app/hooks";
+import { cx } from "@/app/utils";
 
 function ObjectivesContent() {
   const unlockedCheats = useUnlockedCheats();
@@ -37,19 +38,21 @@ function ObjectivesContent() {
             <div
               key={cheat.id}
               suppressHydrationWarning
-              className={`rounded-lg border p-3 ${
+              className={cx(
+                "rounded-lg border p-3",
                 isUnlocked
                   ? "border-emerald-400/50 bg-emerald-400/10"
                   : "border-emerald-300/20 bg-black/40"
-              }`}
+              )}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1">
                   <div
                     suppressHydrationWarning
-                    className={`font-pixel text-[10px] ${
+                    className={cx(
+                      "font-pixel text-[10px]",
                       isUnlocked ? "text-emerald-300" : "text-emerald-100/60"
-                    }`}
+                    )}
                   >
                     {isUnlocked ? "✓ " : "○ "}
                     {cheat.name}
@@ -112,9 +115,11 @@ export function ObjectivesSidebar() {
         aria-label={open ? "Close objectives" : "Open objectives"}
         variant="fab"
         label="OBJ"
-        className={`fixed bottom-16 left-4 z-40 px-4 py-3 lg:transition-all lg:duration-300 ${
+        className={cx(
+          "fixed bottom-16 left-4 z-40 px-4 py-3",
+          "lg:transition-all lg:duration-300",
           open ? "lg:left-[376px]" : "lg:left-4"
-        }`}
+        )}
       >
         <svg
           className="h-5 w-5"
@@ -187,9 +192,11 @@ export function ObjectivesSidebar() {
 
       {/* Desktop fixed left sidebar - always rendered, visibility controlled by parent layout */}
       <aside
-        className={`hidden lg:w-[360px] lg:border-r lg:border-emerald-300/20 lg:bg-black/60 lg:pt-14 lg:backdrop-blur ${
-          open ? "lg:block" : ""
-        }`}
+        className={cx(
+          "hidden lg:w-[360px] lg:border-r lg:border-emerald-300/20",
+          "lg:bg-black/60 lg:pt-14 lg:backdrop-blur",
+          open && "lg:block"
+        )}
       >
         <div className="h-full overflow-y-auto px-6 pb-10">
           <ObjectivesContent />

@@ -15,6 +15,7 @@ import { IconButton } from "../ui/IconButton";
 import { useInputLog } from "../InputLog";
 import { NESController } from "../NESController";
 import { useSidebarToggleEvents } from "@/app/hooks";
+import { cx } from "@/app/utils";
 
 type ModalType = "welcome" | "cheat" | "reset" | null;
 
@@ -47,9 +48,13 @@ export function ControllerPlayground() {
         onClick={() => setModalType("welcome")}
         aria-label="Show help"
         variant="fab"
-        className={`fixed left-4 top-16 z-40 px-4 py-3 text-lg transition-all duration-300 hover:[&>span]:animate-[glitch_0.3s_ease-in-out_infinite] lg:transition-all lg:duration-300 ${
+        className={cx(
+          "fixed left-4 top-16 z-40 px-4 py-3 text-lg",
+          "transition-all duration-300",
+          "hover:[&>span]:animate-[glitch_0.3s_ease-in-out_infinite]",
+          "lg:transition-all lg:duration-300",
           leftSidebarOpen ? "lg:left-[376px]" : "lg:left-4"
-        }`}
+        )}
       >
         <span className="inline-block">?</span>
       </IconButton>
@@ -59,9 +64,12 @@ export function ControllerPlayground() {
         onClick={() => setModalType("reset")}
         aria-label="Reset progress"
         variant="fab"
-        className={`group fixed right-4 top-16 z-40 px-4 py-3 text-sm transition-all duration-300 lg:transition-all lg:duration-300 ${
+        className={cx(
+          "group fixed right-4 top-16 z-40 px-4 py-3 text-sm",
+          "transition-all duration-300",
+          "lg:transition-all lg:duration-300",
           rightSidebarOpen ? "lg:right-[376px]" : "lg:right-4"
-        }`}
+        )}
       >
         <div className="flex items-center gap-2">
           <svg
