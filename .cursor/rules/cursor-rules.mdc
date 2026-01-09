@@ -9,7 +9,7 @@ This guide explains how to create, edit, and manage Cursor rules in your project
 
 ## What are Cursor Rules?
 
-Cursor rules are markdown files (`.mdc` exten sion) that provide context and guidelines to the AI assistant. They help maintain consistency, document patterns, and guide code generation.
+Cursor rules are markdown files (`.mdc` extension) that provide context and guidelines to the AI assistant. They help maintain consistency, document patterns, and guide code generation.
 
 ## File Location
 
