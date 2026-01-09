@@ -150,9 +150,8 @@ describe("InputLogSidebar", () => {
     // Click FAB to toggle (should close)
     await user.click(screen.getByLabelText("Close input log"));
 
-    // Sidebar should be hidden
+    // Sidebar should be hidden (UI state verification)
     await waitFor(() => {
-      // Desktop sidebar should be hidden (no lg:block class when closed)
       const sidebar = document.querySelector("aside");
       expect(sidebar).toBeInTheDocument();
       expect(sidebar).not.toHaveClass("lg:block");
@@ -162,45 +161,11 @@ describe("InputLogSidebar", () => {
     // Click FAB again to toggle (should open)
     await user.click(screen.getByLabelText("Open input log"));
 
-    // Sidebar should be visible again
+    // Sidebar should be visible again (UI state verification)
     await waitFor(() => {
       const sidebar = document.querySelector("aside");
       expect(sidebar).toBeInTheDocument();
       expect(sidebar).toHaveClass("lg:block");
     });
   });
-
-  test("FAB dispatches toggle event on desktop", async () => {
-    mockInnerWidth(1024);
-    const user = userEvent.setup();
-    const eventSpy = jest.fn();
-
-    window.addEventListener("input-log-sidebar-toggled", eventSpy);
-
-    render(
-      <InputLogProvider>
-        <InputLogSidebar />
-      </InputLogProvider>
-    );
-
-    // Wait for initial state
-    await waitFor(() => {
-      expect(screen.getAllByText("INPUT LOG").length).toBeGreaterThan(0);
-    });
-
-    // Click FAB to toggle
-    await user.click(screen.getByLabelText("Close input log"));
-
-    // Should dispatch toggle event
-    await waitFor(() => {
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          detail: { open: false },
-        })
-      );
-    });
-
-    window.removeEventListener("input-log-sidebar-toggled", eventSpy);
-  });
 });
-

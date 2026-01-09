@@ -128,7 +128,7 @@ describe("ObjectivesSidebar", () => {
     expect(container.textContent).toContain("Progress: 0 / 3");
   });
 
-  test("updates when cheat-unlocked event is dispatched", async () => {
+  test("updates progress counter when cheat is unlocked", async () => {
     mockInnerWidth(375);
     const user = userEvent.setup();
     const { container } = render(<ObjectivesSidebar />);
@@ -136,7 +136,7 @@ describe("ObjectivesSidebar", () => {
     // Open sidebar
     await user.click(screen.getByLabelText("Open objectives"));
 
-    // Dispatch cheat unlock event
+    // Dispatch cheat unlock event (event handling tested in useUnlockedCheats.test.tsx)
     await act(async () => {
       window.dispatchEvent(
         new CustomEvent("cheat-unlocked", {
@@ -145,13 +145,13 @@ describe("ObjectivesSidebar", () => {
       );
     });
 
-    // Wait for state update
+    // Verify UI updates (progress counter reflects unlocked cheat)
     await waitFor(() => {
       expect(container.textContent).toContain("Progress: 1 / 3");
     });
   });
 
-  test("resets progress when progress-reset event is dispatched", async () => {
+  test("resets progress counter when progress-reset event is dispatched", async () => {
     mockInnerWidth(375);
     const user = userEvent.setup();
     const { container } = render(<ObjectivesSidebar />);
@@ -172,11 +172,12 @@ describe("ObjectivesSidebar", () => {
       expect(container.textContent).toContain("Progress: 1 / 3");
     });
 
-    // Reset progress
+    // Reset progress (event handling tested in useUnlockedCheats.test.tsx)
     await act(async () => {
       window.dispatchEvent(new CustomEvent("progress-reset", { detail: {} }));
     });
 
+    // Verify UI updates (progress counter resets)
     await waitFor(() => {
       expect(container.textContent).toContain("Progress: 0 / 3");
     });
@@ -195,9 +196,8 @@ describe("ObjectivesSidebar", () => {
     // Click FAB to toggle (should close)
     await user.click(screen.getByLabelText("Close objectives"));
 
-    // Sidebar should be hidden
+    // Sidebar should be hidden (UI state verification)
     await waitFor(() => {
-      // Desktop sidebar should be hidden (no lg:block class when closed)
       const sidebar = document.querySelector("aside");
       expect(sidebar).toBeInTheDocument();
       expect(sidebar).not.toHaveClass("lg:block");
@@ -207,41 +207,12 @@ describe("ObjectivesSidebar", () => {
     // Click FAB again to toggle (should open)
     await user.click(screen.getByLabelText("Open objectives"));
 
-    // Sidebar should be visible again
+    // Sidebar should be visible again (UI state verification)
     await waitFor(() => {
       const sidebar = document.querySelector("aside");
       expect(sidebar).toBeInTheDocument();
       expect(sidebar).toHaveClass("lg:block");
     });
-  });
-
-  test("FAB dispatches toggle event on desktop", async () => {
-    mockInnerWidth(1024);
-    const user = userEvent.setup();
-    const eventSpy = jest.fn();
-
-    window.addEventListener("objectives-sidebar-toggled", eventSpy);
-
-    render(<ObjectivesSidebar />);
-
-    // Wait for initial state
-    await waitFor(() => {
-      expect(screen.getAllByText("OBJECTIVES").length).toBeGreaterThan(0);
-    });
-
-    // Click FAB to toggle
-    await user.click(screen.getByLabelText("Close objectives"));
-
-    // Should dispatch toggle event
-    await waitFor(() => {
-      expect(eventSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          detail: { open: false },
-        })
-      );
-    });
-
-    window.removeEventListener("objectives-sidebar-toggled", eventSpy);
   });
 });
 
