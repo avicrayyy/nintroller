@@ -30,7 +30,6 @@ export function useSidebarState({
   // Open by default on desktop after mount (client-side hydration)
   useEffect(() => {
     if (window.innerWidth >= 1024) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpen(true);
       // Dispatch initial state so other components can sync
       window.dispatchEvent(

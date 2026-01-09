@@ -18,7 +18,6 @@ export function useUnlockedCheats() {
     if (stored) {
       try {
         const ids = JSON.parse(stored) as string[];
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUnlockedCheats(new Set(ids));
       } catch {
         // Ignore parse errors
