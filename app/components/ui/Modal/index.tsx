@@ -134,6 +134,7 @@ export function Modal({
             }}
             fullWidth
             variant="emerald"
+            aria-label={`${footerButtonText} ${title}`}
           >
             {footerButtonText}
           </Button>

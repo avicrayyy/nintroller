@@ -335,7 +335,7 @@ describe("Modal", () => {
         expect(screen.getByRole("dialog")).toBeInTheDocument();
       });
 
-      const confirmButton = screen.getByRole("button", { name: "Confirm" });
+      const confirmButton = screen.getByRole("button", { name: "Confirm Test Modal" });
       await user.click(confirmButton);
 
       await waitFor(() => {
@@ -363,7 +363,7 @@ describe("Modal", () => {
         expect(screen.getByRole("dialog")).toBeInTheDocument();
       });
 
-      const footerButton = screen.getByRole("button", { name: "Close Modal" });
+      const footerButton = screen.getByRole("button", { name: "Close Modal Test Modal" });
       await user.click(footerButton);
 
       await waitFor(() => {

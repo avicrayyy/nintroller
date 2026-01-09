@@ -10,6 +10,7 @@ type Props = {
   className?: string;
   variant?: "primary" | "secondary" | "emerald";
   fullWidth?: boolean;
+  "aria-label"?: string;
 };
 
 export const Button = forwardRef<HTMLButtonElement, Props>(
@@ -20,6 +21,7 @@ export const Button = forwardRef<HTMLButtonElement, Props>(
       className = "",
       variant = "primary",
       fullWidth = false,
+      "aria-label": ariaLabel,
     },
     ref
   ) => {
@@ -28,6 +30,7 @@ export const Button = forwardRef<HTMLButtonElement, Props>(
         ref={ref}
         type="button"
         onClick={onClick}
+        aria-label={ariaLabel}
         className={cx(
           "cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200",
           variant === "primary"
