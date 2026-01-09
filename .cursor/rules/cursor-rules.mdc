@@ -1,0 +1,351 @@
+---
+description: How to add or edit Cursor rules in your project
+alwaysApply: false
+---
+
+# How to Add or Edit Cursor Rules
+
+This guide explains how to create, edit, and manage Cursor rules in your project to help the AI assistant understand your codebase patterns and preferences.
+
+## What are Cursor Rules?
+
+Cursor rules are markdown files (`.mdc` exten sion) that provide context and guidelines to the AI assistant. They help maintain consistency, document patterns, and guide code generation.
+
+## File Location
+
+All Cursor rules live in the `.cursor/rules/` directory:
+
+```
+.cursor/
+└── rules/
+    ├── cursor-rules.mdc          # This file (how to manage rules)
+    ├── project-structure.mdc     # Project organization patterns
+    ├── foundational-rule.mdc     # Core project principles
+    └── self-improve.mdc          # Code quality guidelines
+```
+
+## File Format
+
+Each rule file uses frontmatter (YAML) at the top, followed by markdown content:
+
+```markdown
+---
+description: Brief description of what this rule covers
+globs: # Optional: file patterns this applies to
+  - "**/*.tsx"
+  - "**/*.ts"
+alwaysApply: true # true = always loaded, false = loaded when referenced
+---
+
+# Rule Title
+
+Your rule content here...
+```
+
+### Frontmatter Fields
+
+- **`description`**: Short description of the rule (shown in rule selector)
+- **`globs`**: Optional array of file patterns. Rule only applies when editing matching files
+- **`alwaysApply`**:
+  - `true` - Rule is always loaded as context
+  - `false` - Rule is only loaded when explicitly referenced with `@rule-name`
+
+## Creating a New Rule
+
+### Step 1: Create the File
+
+Create a new `.mdc` file in `.cursor/rules/`:
+
+```bash
+# Example: Create a rule for component patterns
+touch .cursor/rules/component-patterns.mdc
+```
+
+### Step 2: Add Frontmatter
+
+```markdown
+---
+description: React component patterns and conventions
+alwaysApply: true
+---
+
+# Component Patterns
+
+Your rule content...
+```
+
+### Step 3: Write the Rule Content
+
+Use markdown to document:
+
+- Patterns to follow
+- Code examples
+- Anti-patterns to avoid
+- File organization
+- Naming conventions
+
+**Example:**
+
+````markdown
+---
+description: React component patterns and conventions
+alwaysApply: true
+---
+
+# Component Patterns
+
+## Component Structure
+
+All components should follow this structure:
+
+```typescript
+// 1. Imports (external first, then internal)
+import { useState } from "react";
+import { Button } from "@/app/components/ui/Button";
+
+// 2. Types
+type Props = {
+  title: string;
+  onClick: () => void;
+};
+
+// 3. Component
+export function MyComponent({ title, onClick }: Props) {
+  // Component logic
+  return <Button onClick={onClick}>{title}</Button>;
+}
+```
+````
+
+## Naming Conventions
+
+- Components: PascalCase (`MyComponent.tsx`)
+- Hooks: camelCase with "use" prefix (`useMyHook.ts`)
+- Utilities: camelCase (`myUtility.ts`)
+
+```
+
+## Editing Existing Rules
+
+### Option 1: Direct Edit
+
+Simply open the `.mdc` file and edit it directly. Changes take effect immediately.
+
+### Option 2: Reference in Chat
+
+Reference the rule in your chat to edit it:
+
+```
+
+@cursor-rules.mdc update this rule to include...
+
+```
+
+## Rule Organization Best Practices
+
+### 1. Single Responsibility
+
+Each rule should cover one topic:
+- ✅ `component-patterns.mdc` - Component conventions
+- ✅ `testing-patterns.mdc` - Testing guidelines
+- ❌ `everything.mdc` - Too broad
+
+### 2. Descriptive Names
+
+Use clear, descriptive filenames:
+- ✅ `project-structure.mdc`
+- ✅ `api-patterns.mdc`
+- ❌ `rules.mdc`
+- ❌ `stuff.mdc`
+
+### 3. Use `alwaysApply` Wisely
+
+Only set `alwaysApply: true` for:
+- Core project patterns (structure, naming)
+- Frequently referenced rules
+- Rules that should always be considered
+
+Set `alwaysApply: false` for:
+- Specialized rules (e.g., API patterns)
+- Rules only needed in specific contexts
+- Documentation-style rules
+
+### 4. Keep Rules Focused
+
+Aim for 100-500 lines per rule. If a rule gets too long:
+- Split into multiple focused rules
+- Use cross-references: "See `component-patterns.mdc` for component structure"
+
+## Referencing Rules
+
+### In Chat
+
+Reference rules using `@`:
+
+```
+
+@project-structure.mdc what's the pattern for organizing hooks?
+
+````
+
+### In Code Comments
+
+You can reference rules in code:
+
+```typescript
+// Follows pattern from @component-patterns.mdc
+export function MyComponent() {
+  // ...
+}
+````
+
+## Example Rule Structure
+
+Here's a complete example of a well-structured rule:
+
+```markdown
+---
+description: API route patterns and conventions
+globs:
+  - "app/api/**/*.ts"
+alwaysApply: false
+---
+
+# API Route Patterns
+
+## Route Structure
+
+All API routes should follow Next.js App Router conventions:
+```
+
+app/api/
+└── [resource]/
+└── route.ts # GET, POST, PUT, DELETE handlers
+
+````
+
+## Handler Pattern
+
+```typescript
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(req: NextRequest) {
+  try {
+    // Handler logic
+    return NextResponse.json({ data: "success" });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+````
+
+## Error Handling
+
+- Always use try/catch
+- Return appropriate HTTP status codes
+- Include error messages in response
+
+````
+
+## Managing Multiple Rules
+
+### Rule Dependencies
+
+Rules can reference each other:
+
+```markdown
+# Component Patterns
+
+See `project-structure.mdc` for directory organization.
+
+Components should follow the patterns in `testing-patterns.mdc`.
+````
+
+### Rule Hierarchy
+
+Organize rules by scope:
+
+- **Foundational**: Core principles (`foundational-rule.mdc`)
+- **Structure**: Organization (`project-structure.mdc`)
+- **Patterns**: Code patterns (`component-patterns.mdc`)
+- **Quality**: Code quality (`self-improve.mdc`)
+
+## Tips for Effective Rules
+
+1. **Use Examples**: Show good and bad patterns
+2. **Be Specific**: Avoid vague guidelines
+3. **Update Regularly**: Keep rules in sync with codebase changes
+4. **Test Rules**: Reference rules in chat to verify they work
+5. **Document Why**: Explain the reasoning behind patterns
+
+## Common Rule Types
+
+### Project Structure Rules
+
+- Directory organization
+- File naming conventions
+- Import patterns
+
+### Code Pattern Rules
+
+- Component structure
+- Hook patterns
+- API route patterns
+- State management
+
+### Quality Rules
+
+- Code review guidelines
+- Testing requirements
+- Performance considerations
+- Accessibility standards
+
+### Technology-Specific Rules
+
+- Next.js patterns
+- TypeScript conventions
+- Tailwind CSS usage
+- Testing library patterns
+
+## Troubleshooting
+
+### Rule Not Loading
+
+1. Check file is in `.cursor/rules/`
+2. Verify frontmatter is valid YAML
+3. Check `alwaysApply` setting
+4. Try referencing explicitly: `@rule-name.mdc`
+
+### Rule Too Broad
+
+Split into multiple focused rules:
+
+- `component-patterns.mdc` → `component-structure.mdc` + `component-naming.mdc`
+
+### Rule Conflicts
+
+If rules conflict:
+
+- Prioritize more specific rules
+- Update conflicting rules to be consistent
+- Consider merging related rules
+
+## Updating This Project's Rules
+
+Current rules in this project:
+
+- `project-structure.mdc` - Project organization (alwaysApply: true)
+- `foundational-rule.mdc` - Core principles
+- `self-improve.mdc` - Code quality guidelines
+- `cursor-rules.mdc` - This file (alwaysApply: false)
+
+To add a new rule:
+
+1. Create `.mdc` file in `.cursor/rules/`
+2. Add frontmatter with description
+3. Set `alwaysApply` appropriately
+4. Write rule content
+5. Test by referencing in chat
