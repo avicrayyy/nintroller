@@ -12,6 +12,7 @@ import {
 import type { ButtonChangeEvent } from "@/app/types/nes-controller";
 
 import { Button } from "../ui/Button";
+import { cx } from "@/app/utils";
 
 export type InputLogRow = ButtonChangeEvent & { ts: number };
 
@@ -60,7 +61,7 @@ export function InputLog({ className }: { className?: string }) {
   const { rows, clear } = useInputLog();
 
   return (
-    <div className={`flex h-full flex-col ${className ?? ""}`}>
+    <div className={cx("flex h-full flex-col", className)}>
       <div className="sticky top-0 z-10 bg-inherit pt-2">
         <h2 className="hidden font-pixel text-xs text-emerald-200 lg:block">
           INPUT LOG

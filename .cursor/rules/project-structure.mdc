@@ -1,0 +1,346 @@
+---
+description: Nintroller project structure and organization patterns
+globs:
+alwaysApply: true
+---
+
+# Nintroller Project Structure
+
+This rule outlines the directory structure and organization of the Nintroller project - a retro-themed NES controller simulator built with Next.js, TypeScript, and React.
+
+## Project Overview
+
+**Nintroller** is an interactive Nintendo (NES) controller simulator that provides:
+
+- Real-time input logging with timestamps and source tracking
+- Client-side cheat code detection (Konami Code, ABBA, etc.)
+- Responsive design (mobile emulator-style, desktop classic layout)
+- Retro terminal/CRT aesthetic with emerald theme
+- Full accessibility support (ARIA, keyboard navigation, focus management)
+- Comprehensive test coverage (Jest + Testing Library)
+
+## Root Directory Structure
+
+```
+nintroller/
+├── app/                    # 🚀 Next.js 16 App Router directory
+├── __tests__/              # 🧪 Test files (mirrors source structure)
+├── public/                 # 🌐 Static assets (images, fonts, etc.)
+├── package.json            # 📋 Project dependencies & scripts
+├── tsconfig.json           # 📘 TypeScript configuration
+├── jest.config.mjs         # 🧪 Jest test configuration
+├── eslint.config.mjs       # 🔍 ESLint configuration
+├── next.config.ts          # ⚙️ Next.js configuration
+├── postcss.config.mjs      # 🎨 PostCSS configuration
+└── README.md               # 📖 Project documentation
+```
+
+## App Directory (`/app/`)
+
+**Purpose**: Next.js 16 App Router structure with all application code.
+
+```
+app/
+├── api/                    # 🔌 API routes
+│   └── cheats/
+│       └── route.ts        # Cheat detection endpoint (deprecated, client-side by default)
+│
+├── components/            # 🎨 React components (feature-based organization)
+│   ├── ControllerPlayground/  # Main orchestrator component
+│   │   └── index.tsx         # Manages controller, modals, FABs, cheat detection
+│   │
+│   ├── NESController/        # NES Controller UI component
+│   │   ├── index.tsx         # Re-export shim (exports NESController + types)
+│   │   ├── NESController.tsx  # Main controller UI (mobile/desktop layouts)
+│   │   ├── BaseButton.tsx    # Reusable button component (pointer capture, accessibility)
+│   │   └── keyboard.ts       # Keyboard event handlers & mappings
+│   │
+│   ├── InputLog/             # Input logging system
+│   │   └── index.tsx         # Component + Context Provider (InputLogProvider, useInputLog)
+│   │
+│   ├── InputLogSidebar/      # Right sidebar (desktop) / modal (mobile)
+│   │   └── index.tsx         # Responsive sidebar with FAB button
+│   │
+│   ├── ObjectivesSidebar/    # Left sidebar for cheat objectives
+│   │   └── index.tsx         # Displays cheat list, progress, console cards
+│   │
+│   ├── ControllerConsoleCards/  # Console-style info cards
+│   │   └── index.tsx            # Warning & help cards (NoCheatsWarningCard, DesktopInputHelpCard)
+│   │
+│   └── ui/                  # 🎯 Reusable UI components
+│       ├── Button.tsx        # Button component (variants: primary, secondary, emerald)
+│       ├── IconButton/       # Icon button with FAB variant
+│       │   └── index.tsx
+│       ├── Modal/            # Accessible modal component
+│       │   ├── index.tsx     # Modal wrapper (focus management, Escape key, backdrop)
+│       │   └── content/      # Modal content components
+│       │       ├── WelcomeContent.tsx
+│       │       ├── CheatContent.tsx
+│       │       ├── ResetProgressContent.tsx
+│       │       └── index.tsx
+│       └── index.tsx         # Re-export shim for UI components
+│
+├── hooks/                  # 🪝 Custom React hooks
+│   ├── index.ts            # Re-export shim for all hooks
+│   ├── useSidebarState.ts  # Sidebar state management (desktop init, mobile closing)
+│   ├── useEscapeKey.ts     # Escape key handler for modals/sidebars
+│   ├── useFocusManagement.ts  # Focus management between open/close buttons
+│   ├── useUnlockedCheats.ts   # Unlocked cheats state with localStorage persistence
+│   └── useSidebarToggleEvents.ts  # Sidebar toggle event listeners (for FAB positioning)
+│
+├── lib/                    # 📚 API abstraction layer
+│   └── api/
+│       └── cheats.ts       # Server-side cheat detection abstraction (optional)
+│
+├── libs/                   # 🧠 Business logic libraries (pure functions)
+│   └── cheats.ts           # Cheat definitions, detection algorithms, utilities
+│
+├── types/                  # 📘 TypeScript type definitions
+│   └── nes-controller.ts   # NES controller types (NESButton, InputSource, ButtonChangeEvent)
+│
+├── utils/                  # 🛠️ Utility functions
+│   └── index.ts            # cx(), prettyButtonName(), getOrCreateSessionId()
+│
+├── globals.css             # 🎨 Global styles + Tailwind CSS + custom animations
+├── layout.tsx              # 📐 Root layout (sidebars, providers, fonts, CRT overlay)
+├── page.tsx                # 🏠 Home page (renders ControllerPlayground)
+└── favicon.ico             # 🎯 Site favicon
+```
+
+## Tests Directory (`/__tests__/`)
+
+**Purpose**: Test files organized to mirror source structure for easy navigation.
+
+```
+__tests__/
+├── components/             # 🧪 React component tests
+│   ├── Button.test.tsx
+│   ├── IconButton.test.tsx
+│   ├── InputLog.test.tsx
+│   ├── InputLogSidebar.test.tsx
+│   ├── ObjectivesSidebar.test.tsx
+│   ├── ControllerPlayground.test.tsx
+│   └── CheatModal.test.tsx
+│
+└── lib/                   # 🧪 Utility/library tests
+    ├── cheats.test.ts     # Cheat detection algorithm tests
+    ├── keyboard.test.ts   # Keyboard mapping tests
+    └── utils.test.ts      # Utility function tests
+```
+
+## Public Directory (`/public/`)
+
+**Purpose**: Static assets served at the root URL.
+
+```
+public/
+├── demo-desktop.png       # 📸 Desktop demo screenshot
+└── [Next.js default SVGs] # file.svg, globe.svg, next.svg, vercel.svg, window.svg
+```
+
+## Key Configuration Files
+
+### Package Management
+
+- `package.json` - Project dependencies, scripts (dev, build, test, lint)
+- `pnpm-lock.yaml` / `package-lock.json` - Lock files for dependency versions
+
+### TypeScript
+
+- `tsconfig.json` - TypeScript compiler configuration
+  - Strict mode enabled
+  - Path aliases: `@/*` → `./*`
+  - Next.js plugin integration
+
+### Testing
+
+- `jest.config.mjs` - Jest configuration
+  - Next.js integration via `next/jest`
+  - jsdom test environment
+  - Path alias mapping
+- `jest.setup.ts` - Test setup file (global mocks, test utilities)
+
+### Code Quality
+
+- `eslint.config.mjs` - ESLint configuration
+  - Next.js core web vitals rules
+  - TypeScript rules
+  - Custom ignores for build artifacts
+
+### Build & Styling
+
+- `next.config.ts` - Next.js configuration
+- `postcss.config.mjs` - PostCSS configuration (Tailwind CSS)
+- `app/globals.css` - Global styles, Tailwind directives, custom animations
+
+## Component Organization Patterns
+
+### Feature Components (`/app/components/[Feature]/`)
+
+- **Self-contained**: Each feature component lives in its own folder
+- **Entry point**: `index.tsx` provides clean import path
+- **Co-location**: Related files (types, utils) live in the same folder
+- **Examples**: `NESController/`, `InputLog/`, `ControllerPlayground/`
+
+### UI Components (`/app/components/ui/`)
+
+- **Reusable**: Shared across the entire application
+- **Variants**: Components support multiple variants (Button: primary, secondary, emerald)
+- **Accessibility**: Built-in ARIA support, focus management
+- **Composition**: Modal with content components pattern
+
+### Component Structure Pattern
+
+```typescript
+// Standard component folder structure
+[ComponentName]/
+├── index.tsx          # Main component or re-export shim
+├── [ComponentName].tsx # Implementation (if separate from index)
+├── [related].tsx      # Related components (e.g., BaseButton.tsx)
+└── [utils].ts        # Component-specific utilities (e.g., keyboard.ts)
+```
+
+## Hook Organization Patterns
+
+### Custom Hooks (`/app/hooks/`)
+
+- **Single responsibility**: Each hook handles one concern
+- **Reusable**: Can be used across multiple components
+- **Documented**: JSDoc comments explain purpose and usage
+- **Type-safe**: Full TypeScript support with proper types
+
+### Hook Categories
+
+- **State management**: `useSidebarState`, `useUnlockedCheats`
+- **Event handling**: `useEscapeKey`, `useSidebarToggleEvents`
+- **UI utilities**: `useFocusManagement`
+
+## Business Logic Organization
+
+### Pure Functions (`/app/libs/`)
+
+- **No React dependencies**: Can be used in any context
+- **Testable**: Easy to unit test without React setup
+- **Examples**: `cheats.ts` (detection algorithms, cheat definitions)
+
+### API Abstractions (`/app/lib/api/`)
+
+- **Encapsulation**: Abstracts API route calls
+- **Type-safe**: Proper TypeScript types for requests/responses
+- **Optional**: Used only when server-side detection is needed
+
+## Type Organization
+
+### Centralized Types (`/app/types/`)
+
+- **Shared definitions**: Types used across multiple files
+- **Domain-specific**: `nes-controller.ts` contains all NES-related types
+- **Exported**: Re-exported via component index files for convenience
+
+## Utility Organization
+
+### Utilities (`/app/utils/`)
+
+- **Pure functions**: No side effects (except localStorage utilities)
+- **Common helpers**: `cx()` for className concatenation
+- **Formatting**: `prettyButtonName()` for display
+- **Client-side**: `getOrCreateSessionId()` for browser APIs
+
+## File Naming Conventions
+
+### Components
+
+- **PascalCase**: `NESController.tsx`, `InputLogSidebar.tsx`
+- **Descriptive**: Purpose clearly indicated in name
+- **Folder = Component**: Component folder name matches main component
+
+### Hooks
+
+- **camelCase with "use" prefix**: `useSidebarState.ts`, `useEscapeKey.ts`
+- **Descriptive**: Purpose clearly indicated in name
+
+### Utilities & Libraries
+
+- **camelCase**: `cheats.ts`, `keyboard.ts`
+- **Descriptive**: Clear purpose indication
+- **Index files**: `index.ts` for re-exports
+
+### Tests
+
+- **Component name + .test.tsx**: `Button.test.tsx`, `InputLog.test.tsx`
+- **Mirrors source**: Test location mirrors source structure
+
+### Types
+
+- **kebab-case**: `nes-controller.ts`
+- **Domain-specific**: Groups related types together
+
+## Import Patterns
+
+### Path Aliases
+
+- **`@/app/...`**: Absolute imports from app directory
+- **`@/...`**: Root-level imports (configured in tsconfig.json)
+
+### Re-export Shims
+
+```typescript
+// Component index.tsx pattern
+export { ComponentName } from "./ComponentName";
+export type { TypeName } from "./types";
+
+// Hooks index.ts pattern
+export { useHookName } from "./useHookName";
+```
+
+### Import Organization
+
+1. External dependencies (React, Next.js)
+2. Internal types
+3. Internal utilities
+4. Internal components
+5. Internal hooks
+
+## Architecture Patterns
+
+### State Management
+
+- **React Context**: `InputLogProvider` for shared input log state
+- **Local State**: `useState` for component-specific state
+- **Custom Hooks**: Encapsulate complex state logic
+
+### Communication Patterns
+
+- **Props**: Parent-to-child communication
+- **Context**: Shared state across component tree
+- **Custom Events**: Cross-component communication (sidebar toggles, cheat unlocks)
+- **Event-driven**: Decoupled components via window events
+
+### Responsive Design
+
+- **Mobile-first**: Base styles for mobile, `lg:` breakpoint for desktop
+- **Conditional rendering**: Different layouts for mobile vs desktop
+- **Sidebar pattern**: Modal on mobile, fixed sidebar on desktop
+
+### Accessibility
+
+- **ARIA attributes**: `aria-label`, `aria-modal`, `aria-pressed`
+- **Keyboard navigation**: Full keyboard support for controller
+- **Focus management**: Automatic focus on modal open/close
+- **Screen readers**: Semantic HTML and ARIA labels
+
+## Testing Patterns
+
+### Test Organization
+
+- **Mirrors source**: Test structure matches source structure
+- **Co-location**: Tests live in `__tests__/` at root level
+- **Component tests**: React Testing Library for component tests
+- **Unit tests**: Jest for pure function tests
+
+### Test Coverage
+
+- **Components**: All major components have tests
+- **Utilities**: All utility functions have tests
+- **Business logic**: Cheat detection algorithms fully tested
+- **Integration**: Component integration tests for user flows

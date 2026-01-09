@@ -1,0 +1,493 @@
+---
+description: Foundational coding principles, standards, and patterns for the Nintroller project
+globs:
+alwaysApply: true
+---
+
+# Foundational Coding Principles
+
+This rule defines the core coding standards, patterns, and requirements that all code in the Nintroller project must follow. These principles ensure consistency, maintainability, accessibility, and quality across the entire codebase.
+
+## TypeScript Standards
+
+### Type Safety
+
+- **Strict Mode**: Always enabled (`"strict": true` in `tsconfig.json`)
+- **No `any` types**: Use `unknown` or proper types instead
+- **Explicit return types**: Functions should have explicit return types when not obvious
+- **Type inference**: Use type inference for simple cases, explicit types for complex logic
+
+```typescript
+// ✅ Good: Explicit types for complex functions
+export function useSidebarState(options: UseSidebarStateOptions): {
+  open: boolean;
+  setOpen: (value: boolean) => void;
+  toggle: () => void;
+} {
+  // ...
+}
+
+// ✅ Good: Type inference for simple cases
+const count = useState(0); // Inferred as number
+
+// ❌ Bad: Using any
+function processData(data: any) {}
+```
+
+### Type Organization
+
+- **Centralized types**: Shared types live in `app/types/`
+- **Domain-specific grouping**: Group related types together (e.g., `nes-controller.ts`)
+- **Re-exports**: Use index files for clean imports
+- **Type vs Interface**: Prefer `type` for unions/intersections, `interface` for object shapes that may be extended
+
+```typescript
+// ✅ Good: Centralized domain types
+// app/types/nes-controller.ts
+export type NESButton =
+  | "up"
+  | "down"
+  | "left"
+  | "right"
+  | "a"
+  | "b"
+  | "select"
+  | "start";
+export type InputSource = "keyboard" | "mouse" | "touch";
+export type ButtonChangeEvent = {
+  button: NESButton;
+  pressed: boolean;
+  source: InputSource;
+  timestamp: number;
+};
+
+// ✅ Good: Re-export pattern
+// app/components/NESController/index.tsx
+export type { NESButton, ButtonChangeEvent } from "@/app/types/nes-controller";
+```
+
+### Path Aliases
+
+- **Use `@/` prefix**: Always use path aliases instead of relative imports
+- **Absolute imports**: `@/app/...` for app directory, `@/...` for root-level
+
+```typescript
+// ✅ Good: Path aliases
+import { cx } from "@/app/utils";
+import type { NESButton } from "@/app/types/nes-controller";
+
+// ❌ Bad: Relative imports
+import { cx } from "../../utils";
+```
+
+### Type Guards & Type Safety
+
+- **Type guards**: Use type guards for runtime type checking
+- **Type-safe events**: Use typed event helpers instead of casting
+
+```typescript
+// ✅ Good: Type-safe event helpers
+import { isTypedEvent, getEventDetail } from "@/app/utils/events";
+
+const handleEvent = (e: Event) => {
+  if (isTypedEvent<{ cheat: Cheat }>(e, EVENT_NAMES.CHEAT_UNLOCKED)) {
+    const detail = getEventDetail(e); // Type-safe access
+  }
+};
+
+// ❌ Bad: Type casting
+const detail = (e as CustomEvent<{ cheat: Cheat }>).detail;
+```
+
+## React Patterns
+
+### Component Structure
+
+- **Folder-based organization**: Each component has its own folder
+- **Re-export shims**: Use `index.tsx` for clean import paths
+- **Single responsibility**: Each component should have one clear purpose
+- **Composition over inheritance**: Prefer composition patterns
+
+```typescript
+// ✅ Good: Folder structure
+// app/components/Button/index.tsx
+export { Button } from "./Button";
+export type { ButtonProps } from "./Button";
+
+// ✅ Good: Component composition
+export function Modal({ children, ...props }: ModalProps) {
+  return (
+    <div role="dialog" aria-modal="true">
+      {children}
+    </div>
+  );
+}
+```
+
+### Hooks Usage
+
+- **Custom hooks**: Extract reusable logic into custom hooks
+- **Single responsibility**: Each hook handles one concern
+- **JSDoc comments**: Document hook purpose and usage
+- **Dependency arrays**: Always include all dependencies in `useEffect`, `useCallback`, `useMemo`
+
+```typescript
+// ✅ Good: Custom hook with documentation
+/**
+ * Manages sidebar open/close state with desktop initialization
+ * and mobile closing behavior
+ */
+export function useSidebarState(options: UseSidebarStateOptions) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    // Desktop initialization
+    if (window.innerWidth >= 1024) {
+      setOpen(true);
+    }
+  }, []); // Empty deps: only run on mount
+
+  return { open, setOpen, toggle };
+}
+
+// ❌ Bad: Missing dependencies
+useEffect(() => {
+  setCount(count + 1); // Missing 'count' in deps
+}, []);
+```
+
+### State Management
+
+- **Local state**: Use `useState` for component-specific state
+- **Context**: Use React Context for shared state across component tree
+- **Custom events**: Use window events for cross-component communication
+- **No global state library**: Keep it simple with React built-ins
+
+```typescript
+// ✅ Good: Context for shared state
+const InputLogContext = createContext<InputLogContextValue | null>(null);
+
+// ✅ Good: Custom events for decoupled communication
+window.dispatchEvent(
+  createCheatUnlockedEvent({ id: "konami", name: "Konami Code" })
+);
+```
+
+### Component Patterns
+
+- **`forwardRef`**: Use for components that need ref forwarding
+- **`displayName`**: Set `displayName` for `forwardRef` components
+- **Props types**: Always define explicit props types
+- **Default props**: Use default parameters instead of `defaultProps`
+
+```typescript
+// ✅ Good: forwardRef with displayName
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ onClick, children, className }, ref) => {
+    return (
+      <button ref={ref} onClick={onClick} className={className}>
+        {children}
+      </button>
+    );
+  }
+);
+
+Button.displayName = "Button";
+
+// ✅ Good: Default parameters
+export function Modal({ open = false, onClose }: ModalProps) {
+  // ...
+}
+```
+
+### Performance Optimization
+
+- **`useCallback`**: Memoize event handlers passed to child components
+- **`useMemo`**: Memoize expensive computations
+- **Lazy evaluation**: Use lazy initializers for `useState` when appropriate
+
+```typescript
+// ✅ Good: Memoized callback
+const handleButtonChange = useCallback(
+  (e: ButtonChangeEvent) => {
+    addEvent(e);
+    // ... handler logic
+  },
+  [addEvent] // Include all dependencies
+);
+
+// ✅ Good: Lazy state initialization
+const [data, setData] = useState(() => {
+  const stored = localStorage.getItem("key");
+  return stored ? JSON.parse(stored) : null;
+});
+```
+
+### React Import Style
+
+- **Direct imports**: Use direct imports, not `React.*` namespace
+- **Type imports**: Use `import type` for type-only imports
+
+```typescript
+// ✅ Good: Direct imports
+import { useState, useEffect, useCallback } from "react";
+import type { ReactNode } from "react";
+
+// ❌ Bad: React namespace
+import React from "react";
+const [state, setState] = React.useState(0);
+```
+
+## Accessibility Requirements
+
+### ARIA Attributes
+
+- **Semantic HTML**: Use semantic HTML elements (`<button>`, `<nav>`, `<dialog>`)
+- **ARIA labels**: Always provide `aria-label` for icon-only buttons
+- **ARIA states**: Use `aria-pressed`, `aria-expanded`, `aria-modal` appropriately
+- **Role attributes**: Use `role` when semantic HTML isn't sufficient
+
+```typescript
+// ✅ Good: Proper ARIA usage
+<button
+  type="button"
+  aria-label="Close dialog"
+  aria-pressed={isPressed}
+>
+  <span aria-hidden="true">×</span>
+</button>
+
+// ✅ Good: Modal with proper ARIA
+<div
+  role="dialog"
+  aria-modal="true"
+  aria-label={ariaLabel || title}
+>
+  {children}
+</div>
+```
+
+### Keyboard Navigation
+
+- **Full keyboard support**: All interactive elements must be keyboard accessible
+- **Focus management**: Manage focus on modal open/close
+- **Escape key**: Close modals/sidebars with Escape key
+- **Tab order**: Logical tab order throughout the application
+
+```typescript
+// ✅ Good: Escape key handling
+useEffect(() => {
+  if (!open) return;
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+      onClose();
+    }
+  };
+
+  window.addEventListener("keydown", handleKeyDown);
+  return () => window.removeEventListener("keydown", handleKeyDown);
+}, [open, onClose]);
+
+// ✅ Good: Focus management
+useEffect(() => {
+  if (isOpen) {
+    closeButtonRef.current?.focus();
+  } else {
+    openButtonRef.current?.focus();
+  }
+}, [isOpen]);
+```
+
+### Focus Styles
+
+- **Visible focus**: Always provide visible focus indicators
+- **Focus rings**: Use `focus-visible:ring-*` for keyboard focus
+- **Skip links**: Consider skip links for navigation-heavy pages
+
+```typescript
+// ✅ Good: Focus styles
+<button
+  className="outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/60"
+  aria-label="Button"
+>
+  Click me
+</button>
+```
+
+### Screen Reader Support
+
+- **Descriptive labels**: Use descriptive `aria-label` text
+- **Hidden decorative elements**: Use `aria-hidden="true"` for decorative icons
+- **Live regions**: Use `aria-live` for dynamic content updates when appropriate
+
+```typescript
+// ✅ Good: Screen reader support
+<button aria-label="Reset all progress">
+  <svg aria-hidden="true">{/* Decorative icon */}</svg>
+  <span className="sr-only">Reset</span>
+</button>
+```
+
+## Testing Standards
+
+### Test Organization
+
+- **Mirror structure**: Test files mirror source structure in `__tests__/`
+- **Co-location**: Tests live in `__tests__/` at root level
+- **Naming**: Use `[ComponentName].test.tsx` for component tests
+- **Grouping**: Use `describe` blocks to group related tests
+
+```typescript
+// ✅ Good: Test organization
+// __tests__/components/Button.test.tsx
+import { Button } from "@/app/components/ui/Button";
+
+describe("Button", () => {
+  test("renders with primary variant by default", () => {
+    // ...
+  });
+
+  test("calls onClick when clicked", async () => {
+    // ...
+  });
+});
+```
+
+### Testing Library Best Practices
+
+- **User-centric queries**: Prefer `getByRole`, `getByLabelText` over `getByTestId`
+- **User events**: Use `@testing-library/user-event` for interactions
+- **Accessibility testing**: Test accessibility through queries
+- **Async handling**: Use `async/await` with `userEvent` and `waitFor`
+
+```typescript
+// ✅ Good: User-centric testing
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
+test("calls onClick when clicked", async () => {
+  const user = userEvent.setup();
+  const handleClick = jest.fn();
+
+  render(<Button onClick={handleClick}>Click me</Button>);
+
+  await user.click(screen.getByRole("button", { name: /click me/i }));
+
+  expect(handleClick).toHaveBeenCalledTimes(1);
+});
+
+// ❌ Bad: Test ID queries
+screen.getByTestId("button");
+```
+
+### Test Coverage
+
+- **Components**: All major components must have tests
+- **Utilities**: All utility functions must have tests
+- **Hooks**: Custom hooks must have dedicated unit tests
+- **Business logic**: Core algorithms must be fully tested
+
+```typescript
+// ✅ Good: Comprehensive hook testing
+describe("useSidebarState", () => {
+  test("initializes as closed on mobile", () => {
+    // ...
+  });
+
+  test("opens by default on desktop", () => {
+    // ...
+  });
+
+  test("toggles state correctly", () => {
+    // ...
+  });
+});
+```
+
+### Mocking & Setup
+
+- **Window mocks**: Mock `window.innerWidth`, `window.dispatchEvent` when needed
+- **localStorage**: Mock `localStorage` for persistence tests
+- **Event listeners**: Mock `window.addEventListener`/`removeEventListener` for hook tests
+- **Setup file**: Use `jest.setup.ts` for global mocks
+
+```typescript
+// ✅ Good: Proper mocking
+beforeEach(() => {
+  Object.defineProperty(window, "innerWidth", {
+    writable: true,
+    configurable: true,
+    value: 1200, // Desktop width
+  });
+
+  jest.spyOn(window, "dispatchEvent").mockImplementation(() => true);
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+```
+
+### Test Quality
+
+- **Descriptive names**: Test names should clearly describe what they test
+- **Arrange-Act-Assert**: Follow AAA pattern
+- **Isolation**: Each test should be independent
+- **No test interdependencies**: Tests should not depend on execution order
+
+```typescript
+// ✅ Good: Clear test structure
+test("closes sidebar when Escape key is pressed", () => {
+  // Arrange
+  const onClose = jest.fn();
+  render(<Sidebar open={true} onClose={onClose} />);
+
+  // Act
+  fireEvent.keyDown(window, { key: "Escape" });
+
+  // Assert
+  expect(onClose).toHaveBeenCalledTimes(1);
+});
+```
+
+## Code Quality Standards
+
+### Naming Conventions
+
+- **Components**: PascalCase (`Button`, `NESController`)
+- **Hooks**: camelCase with "use" prefix (`useSidebarState`, `useEscapeKey`)
+- **Utilities**: camelCase (`cx`, `prettyButtonName`)
+- **Types**: PascalCase (`ButtonProps`, `NESButton`)
+- **Files**: Match export (component files = PascalCase, hooks = camelCase)
+
+### Code Organization
+
+- **Single responsibility**: Each function/component should do one thing
+- **DRY principle**: Don't repeat yourself - extract reusable logic
+- **Separation of concerns**: Separate UI, business logic, and utilities
+- **Pure functions**: Prefer pure functions in `app/libs/` and `app/utils/`
+
+### Error Handling
+
+- **Graceful degradation**: Handle errors gracefully
+- **User feedback**: Provide clear error messages when appropriate
+- **Type safety**: Use TypeScript to prevent runtime errors
+
+### Documentation
+
+- **JSDoc comments**: Document complex functions and hooks
+- **Inline comments**: Explain "why", not "what"
+- **README**: Keep README updated with project structure and patterns
+
+## Summary
+
+These foundational principles ensure:
+
+1. **Type Safety**: Strict TypeScript with proper type organization
+2. **React Best Practices**: Modern React patterns with hooks and composition
+3. **Accessibility**: Full ARIA support, keyboard navigation, focus management
+4. **Test Quality**: Comprehensive testing with Testing Library best practices
+5. **Code Quality**: Consistent naming, organization, and documentation
+
+All code in the Nintroller project should adhere to these standards. When in doubt, refer to existing code patterns in the codebase or consult this rule.

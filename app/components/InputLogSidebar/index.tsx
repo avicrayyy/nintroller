@@ -1,100 +1,43 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 import { InputLog } from "@/app/components/InputLog";
 import { IconButton } from "@/app/components/ui/IconButton";
+import {
+  useEscapeKey,
+  useFocusManagement,
+  useSidebarState,
+} from "@/app/hooks";
+import { cx } from "@/app/utils";
 
 export function InputLogSidebar() {
-  // Always start closed for deterministic SSR
-  const [open, setOpen] = useState(false);
   const openButtonRef = useRef<HTMLButtonElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  // Open by default on desktop after mount (client-side hydration)
-  useEffect(() => {
-    if (window.innerWidth >= 1024) {
-      // Hydrating client-side screen size after mount is the correct pattern
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setOpen(true);
-      // Dispatch initial state so other components can sync
-      window.dispatchEvent(
-        new CustomEvent("input-log-sidebar-toggled", {
-          detail: { open: true },
-        })
-      );
-    }
-  }, []);
+  const { open, setOpen, toggle } = useSidebarState({
+    otherSidebarEvent: "objectives-sidebar-opened",
+    openEvent: "input-log-sidebar-opened",
+    toggleEvent: "input-log-sidebar-toggled",
+  });
 
-  // Listen for other sidebar opening on mobile
-  useEffect(() => {
-    const handleOtherSidebarOpen = () => {
-      if (window.innerWidth < 1024 && open) {
-        setOpen(false);
-      }
-    };
-
-    window.addEventListener(
-      "objectives-sidebar-opened",
-      handleOtherSidebarOpen
-    );
-    return () => {
-      window.removeEventListener(
-        "objectives-sidebar-opened",
-        handleOtherSidebarOpen
-      );
-    };
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open]);
-
-  useEffect(() => {
-    if (open) closeButtonRef.current?.focus();
-    else openButtonRef.current?.focus();
-  }, [open]);
+  useEscapeKey(open, () => setOpen(false));
+  useFocusManagement(open, openButtonRef, closeButtonRef);
 
   return (
     <>
       {/* FAB - visible on all screen sizes */}
       <IconButton
         ref={openButtonRef}
-        onClick={() => {
-          const isMobile = window.innerWidth < 1024;
-          if (isMobile) {
-            setOpen(true);
-            // Notify other sidebar to close on mobile
-            window.dispatchEvent(
-              new CustomEvent("input-log-sidebar-opened", { detail: {} })
-            );
-          } else {
-            // Toggle on desktop
-            setOpen((prev) => {
-              const next = !prev;
-              // Dispatch event after state update completes (defer to avoid render errors)
-              queueMicrotask(() => {
-                window.dispatchEvent(
-                  new CustomEvent("input-log-sidebar-toggled", {
-                    detail: { open: next },
-                  })
-                );
-              });
-              return next;
-            });
-          }
-        }}
+        onClick={toggle}
         aria-label={open ? "Close input log" : "Open input log"}
         variant="fab"
         label="LOG"
-        className={`fixed bottom-16 right-4 z-40 px-4 py-3 lg:transition-all lg:duration-300 ${
+        className={cx(
+          "fixed bottom-16 right-4 z-40 px-4 py-3",
+          "lg:transition-all lg:duration-300",
           open ? "lg:right-[376px]" : "lg:right-4"
-        }`}
+        )}
       >
         <svg
           className="h-5 w-5"
@@ -167,9 +110,11 @@ export function InputLogSidebar() {
 
       {/* Desktop fixed right sidebar - always rendered, visibility controlled by parent layout */}
       <aside
-        className={`hidden lg:w-[360px] lg:border-l lg:border-emerald-300/20 lg:bg-black/60 lg:pt-14 lg:backdrop-blur ${
-          open ? "lg:block" : ""
-        }`}
+        className={cx(
+          "hidden lg:w-[360px] lg:border-l lg:border-emerald-300/20",
+          "lg:bg-black/60 lg:pt-14 lg:backdrop-blur",
+          open && "lg:block"
+        )}
       >
         <div className="h-full px-6 pb-10">
           <InputLog className="h-full" />

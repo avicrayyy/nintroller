@@ -232,6 +232,18 @@ nintroller/
 │   │               ├── ResetProgressContent.tsx
 │   │               └── index.tsx
 │   │
+│   ├── hooks/                    # Custom React hooks
+│   │   ├── index.ts             # Re-export shim for all hooks
+│   │   ├── useSidebarState.ts   # Sidebar state management
+│   │   ├── useEscapeKey.ts      # Escape key handler
+│   │   ├── useFocusManagement.ts # Focus management
+│   │   ├── useUnlockedCheats.ts # Unlocked cheats with localStorage
+│   │   └── useSidebarToggleEvents.ts # Sidebar toggle event listeners
+│   │
+│   ├── lib/                      # API abstraction layer
+│   │   └── api/
+│   │       └── cheats.ts       # Server-side cheat detection abstraction (optional)
+│   │
 │   ├── libs/                     # Business logic libraries
 │   │   └── cheats.ts            # Cheat definitions & detection logic
 │   │
@@ -260,7 +272,7 @@ nintroller/
 │       └── utils.test.ts
 │
 ├── public/                       # Static assets
-│   └── demo-vid.mp4             # Demo video
+│   └── demo-desktop.png         # Desktop demo screenshot
 │
 └── [config files]               # package.json, tsconfig.json, etc.
 ```
@@ -284,6 +296,19 @@ nintroller/
   - Centralized types for better maintainability
   - Used across components and utilities
 
+- **`app/hooks/`**: Custom React hooks
+
+  - Reusable hooks for state management, event handling, and UI utilities
+  - Single responsibility principle
+  - Fully typed with TypeScript
+  - Examples: `useSidebarState`, `useUnlockedCheats`, `useEscapeKey`
+
+- **`app/lib/api/`**: API abstraction layer
+
+  - Encapsulates API route calls
+  - Type-safe request/response handling
+  - Optional server-side patterns (client-side by default)
+
 - **`app/utils/`**: Shared utility functions
 
   - `cx()` for className concatenation
@@ -300,8 +325,9 @@ nintroller/
 1. **Folder-based organization**: Each component has its own folder
 2. **Re-export shims**: `index.tsx` files provide clean import paths
 3. **Context providers**: Shared state via React Context (e.g., `InputLogProvider`)
-4. **Event-driven communication**: Custom events for cross-component updates
-5. **Responsive design**: Mobile-first with desktop enhancements
+4. **Custom hooks**: Reusable logic extracted into hooks (e.g., `useSidebarState`, `useUnlockedCheats`)
+5. **Event-driven communication**: Custom events for cross-component updates
+6. **Responsive design**: Mobile-first with desktop enhancements
 
 ### Code Style
 

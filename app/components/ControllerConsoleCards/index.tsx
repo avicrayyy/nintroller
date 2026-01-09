@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 
-import { cx } from "@/app/utils";
+import { cx, SHADOWS } from "@/app/utils";
 
 function Card({
   title,
@@ -16,16 +16,14 @@ function Card({
   return (
     <div
       className={cx(
-        "rounded-2xl border border-emerald-300/20 bg-black/50 p-4 shadow-[0_0_0_1px_rgba(16,185,129,0.10),_0_18px_35px_rgba(0,0,0,0.45)] backdrop-blur",
+        "rounded-2xl border border-emerald-300/20 bg-black/50 p-4",
+        SHADOWS.card,
+        "backdrop-blur",
         className
       )}
     >
-      <div className="font-pixel text-[11px] text-emerald-200/80">
-        {title}
-      </div>
-      <div className="mt-2 text-sm text-emerald-100/90">
-        {children}
-      </div>
+      <div className="font-pixel text-[11px] text-emerald-200/80">{title}</div>
+      <div className="mt-2 text-sm text-emerald-100/90">{children}</div>
     </div>
   );
 }
@@ -37,9 +35,7 @@ export function NoCheatsWarningCard() {
       className="border-rose-400/25 bg-rose-500/10 motion-safe:animate-wiggle"
     >
       <div className="font-pixel text-xs text-rose-200">NO CHEATS</div>
-      <div className="mt-2 font-mono text-sm text-rose-100/90">
-        No cheats.
-      </div>
+      <div className="mt-2 font-mono text-sm text-rose-100/90">No cheats.</div>
       <div className="mt-1 font-mono text-xs text-rose-100/70">
         Inputs are recorded + checked. Play it straight.
       </div>
@@ -66,5 +62,3 @@ export function DesktopInputHelpCard() {
     </Card>
   );
 }
-
-
